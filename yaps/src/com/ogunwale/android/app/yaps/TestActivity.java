@@ -1,4 +1,4 @@
-package com.ogunwale.android.app.picaface;
+package com.ogunwale.android.app.yaps;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -15,6 +15,7 @@ import com.google.api.services.picasa.PicasaClient;
 import com.google.api.services.picasa.PicasaUrl;
 import com.google.api.services.picasa.model.AlbumEntry;
 import com.google.api.services.picasa.model.UserFeed;
+import com.ogunwale.android.app.yaps.R;
 
 import android.os.Bundle;
 import android.app.Activity;

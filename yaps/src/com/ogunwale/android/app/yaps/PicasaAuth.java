@@ -1,4 +1,4 @@
-package com.ogunwale.android.app.picaface;
+package com.ogunwale.android.app.yaps;
 
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
