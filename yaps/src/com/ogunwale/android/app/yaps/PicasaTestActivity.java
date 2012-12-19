@@ -27,9 +27,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 
-public class TestActivity extends Activity {
+public class PicasaTestActivity extends Activity {
 
-    private static final String sTAG = TestActivity.class.getSimpleName();
+    private static final String sTAG = PicasaTestActivity.class.getSimpleName();
 
     private static final String APP_NAME = "picaface";
 
