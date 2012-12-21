@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:addStatesFromChildren="true"
+    android:focusable="true"
+    android:orientation="horizontal" >
+
+    <Spinner
+        android:id="@+id/photo_source"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="left" />
+
+    <Spinner
+        android:id="@+id/photo_sort"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="left" />
+
+</LinearLayout>

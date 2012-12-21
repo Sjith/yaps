@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <array name="sources">
         <item>@string/facebook</item>
         <item>@string/picasa</item>
     </array>
+    <array name="transfer_direction">
+        <item>@string/picasa_to_facebook</item>
+        <item>@string/facebook_to_picasa</item>
+    </array>
+    <array name="sort_photos_by">
+        <item>@string/Albums</item>
+        <item>@string/Locations</item>
+        <item>@string/People</item>
+    </array>
+
 </resources>
