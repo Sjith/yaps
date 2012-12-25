@@ -39,6 +39,9 @@ public class Entry implements Cloneable {
   @Key
   public String updated;
 
+  @Key("media:group")
+  public MediaGroup mediaGroup;
+
   public String getFeedLink() {
     return Link.find(links, "http://schemas.google.com/g/2005#feed");
   }
@@ -50,7 +53,6 @@ public class Entry implements Cloneable {
   @Override
   protected Entry clone() {
     try {
-      @SuppressWarnings("unchecked")
       Entry result = (Entry) super.clone();
       Data.deepCopy(this, result);
       return result;

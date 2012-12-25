@@ -78,8 +78,9 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
         setContentView(R.layout.activity_photos);
 
         // Set-up cursor adapter
-        String[] from = new String[] { PhotosProvider.AlbumTable.COLUMN_NAME_TITLE, PhotosProvider.AlbumTable.COLUMN_NAME_PHOTOS_COUNT };
-        int[] to = new int[] { R.id.thumbnail_description, R.id.thumbnail_count };
+        String[] from = new String[] { PhotosProvider.AlbumTable.COLUMN_NAME_COVER_URL, PhotosProvider.AlbumTable.COLUMN_NAME_TITLE,
+                PhotosProvider.AlbumTable.COLUMN_NAME_PHOTOS_COUNT };
+        int[] to = new int[] { R.id.thumbnail_image, R.id.thumbnail_description, R.id.thumbnail_count };
         mAdapter = new SimpleCursorAdapter(this, R.layout.layout_photo_thumbnail, null, from, to, 0);
 
         // Set-up thumbnail grid
@@ -219,8 +220,8 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // This is called when a new Loader needs to be created. We
         // only has one Loader, so we don't care about the ID.
-        String[] projection = new String[] { PhotosProvider.AlbumTable._ID, PhotosProvider.AlbumTable.COLUMN_NAME_TITLE,
-                PhotosProvider.AlbumTable.COLUMN_NAME_PHOTOS_COUNT };
+        String[] projection = new String[] { PhotosProvider.AlbumTable._ID, PhotosProvider.AlbumTable.COLUMN_NAME_COVER_URL,
+                PhotosProvider.AlbumTable.COLUMN_NAME_TITLE, PhotosProvider.AlbumTable.COLUMN_NAME_PHOTOS_COUNT };
         String selection = String.format(Locale.getDefault(), "%s=?", PhotosProvider.AlbumTable.COLUMN_NAME_SOURCE);
         String[] selectionArgs = new String[] { String.valueOf(mSourceSelection.getValue()) };
 

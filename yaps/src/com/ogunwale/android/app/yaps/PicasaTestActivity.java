@@ -1,5 +1,9 @@
 package com.ogunwale.android.app.yaps;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.google.api.client.http.HttpTransport;
 import com.google.api.services.picasa.model.AlbumEntry;
 import com.google.api.services.picasa.model.UserFeed;
 import com.ogunwale.android.app.yaps.R;
@@ -18,7 +22,9 @@ public class PicasaTestActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
 
-        new PicasaDataTimerTask(this, false, new PicasaDataAlbumListener() {
+        Logger.getLogger(HttpTransport.class.getName()).setLevel(Level.CONFIG);
+
+        new PicasaDataTimerTask(this, true, new PicasaDataAlbumListener() {
             @Override
             public void RequestFailed(FailureCause cause) {
                 Log.e(sTAG, "Request failed: " + FailureCause.toString(cause));
@@ -41,6 +47,9 @@ public class PicasaTestActivity extends Activity {
                 Log.i(sTAG, "Album title: " + album.title);
                 Log.i(sTAG, "Updated: " + album.updated);
                 Log.i(sTAG, "Album ETag: " + album.etag);
+                Log.i(sTAG, "Thumbnail URL: " + album.mediaGroup.thumbnail.url);
+                if (album.location != null)
+                    Log.i(sTAG, "Location: " + album.location);
                 if (album.summary != null)
                     Log.i(sTAG, "Description: " + album.summary);
             }

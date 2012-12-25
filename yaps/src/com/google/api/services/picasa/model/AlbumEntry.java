@@ -30,6 +30,12 @@ public class AlbumEntry extends Entry {
   @Key("gphoto:numphotos")
   public int numPhotos;
 
+  @Key("gphoto:location")
+  public String location;
+
+  @Key("gphoto:bytesUsed")
+  public long bytesUsed;
+
   @Override
   public AlbumEntry clone() {
     return (AlbumEntry) super.clone();

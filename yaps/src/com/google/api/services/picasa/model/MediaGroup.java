@@ -22,4 +22,6 @@ import com.google.api.client.util.Key;
 public class MediaGroup {
   @Key("media:content")
   public MediaContent content;
+  @Key("media:thumbnail")
+  public MediaThumbnail thumbnail;
 }

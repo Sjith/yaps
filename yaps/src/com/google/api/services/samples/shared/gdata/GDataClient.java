@@ -14,8 +14,6 @@
 
 package com.google.api.services.samples.shared.gdata;
 
-import android.util.Log;
-
 import com.google.api.client.googleapis.GoogleUrl;
 import com.google.api.client.googleapis.MethodOverride;
 import com.google.api.client.http.AbstractHttpContent;
@@ -87,12 +85,6 @@ public abstract class GDataClient {
   protected final HttpResponse execute(HttpRequest request) throws IOException {
     prepare(request);
     HttpResponse response = request.execute();
-
-    //String string = response.parseAsString();
-    // REMOVE or CAHNGE back.
-    //Log.i("HTTPResponse", "\n\nStart>>>>>>>>>>>>");
-    //Log.i("HTTPRespose", string);
-    //Log.i("HTTPResponse", "<<<<<<<<<<<<<<End\n\n");
     return response;
   }
 

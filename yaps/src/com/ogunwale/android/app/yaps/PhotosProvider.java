@@ -26,8 +26,8 @@ public class PhotosProvider extends ContentProvider {
 
     public static final String AUTHORITY = "com.ogunwale.android.app.yaps.PhotosProvider";
 
-    public static final int DATABASE_VERSION = 2;
-    public static final int DELETE_VERSION_MIN = 2;
+    public static final int DATABASE_VERSION = 3;
+    public static final int DELETE_VERSION_MIN = 3;
     public static final String DATABASE_NAME = "Photos.db";
 
     private static final String TEXT_TYPE = " TEXT";
@@ -61,6 +61,8 @@ public class PhotosProvider extends ContentProvider {
         public static final String COLUMN_NAME_ACCESS = "access";
         public static final String COLUMN_NAME_SUMMARY = "summary";
         public static final String COLUMN_NAME_PHOTOS_COUNT = "photos_count";
+        public static final String COLUMN_NAME_LOCATION = "location";
+        public static final String COLUMN_NAME_COVER_URL = "cover_url";
 
         // Create statement
         // @formatter:off
@@ -73,7 +75,9 @@ public class PhotosProvider extends ContentProvider {
                 COLUMN_NAME_LINK_FEED + TEXT_TYPE + COMMA_SEP +
                 COLUMN_NAME_ACCESS + TEXT_TYPE + COMMA_SEP +
                 COLUMN_NAME_SUMMARY + TEXT_TYPE + COMMA_SEP +
-                COLUMN_NAME_PHOTOS_COUNT + INTEGER_TYPE +
+                COLUMN_NAME_PHOTOS_COUNT + INTEGER_TYPE + COMMA_SEP +
+                COLUMN_NAME_LOCATION + TEXT_TYPE + COMMA_SEP +
+                COLUMN_NAME_COVER_URL + TEXT_TYPE +
                 " )";
         // @formatter:on
 

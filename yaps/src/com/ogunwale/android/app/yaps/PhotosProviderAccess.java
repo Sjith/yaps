@@ -116,6 +116,8 @@ public class PhotosProviderAccess {
             values.put(PhotosProvider.AlbumTable.COLUMN_NAME_SUMMARY, album.summary);
             values.put(PhotosProvider.AlbumTable.COLUMN_NAME_TITLE, album.title);
             values.put(PhotosProvider.AlbumTable.COLUMN_NAME_UPDATED, album.updated);
+            values.put(PhotosProvider.AlbumTable.COLUMN_NAME_LOCATION, album.location);
+            values.put(PhotosProvider.AlbumTable.COLUMN_NAME_COVER_URL, album.mediaGroup.thumbnail.url);
 
             return values;
         }
