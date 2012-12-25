@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2011 Google Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -13,6 +13,8 @@
  */
 
 package com.google.api.services.samples.shared.gdata;
+
+import android.util.Log;
 
 import com.google.api.client.googleapis.GoogleUrl;
 import com.google.api.client.googleapis.MethodOverride;
@@ -26,7 +28,7 @@ import java.io.IOException;
 
 /**
  * GData client.
- * 
+ *
  * @author Yaniv Inbar
  */
 public abstract class GDataClient {
@@ -84,7 +86,14 @@ public abstract class GDataClient {
 
   protected final HttpResponse execute(HttpRequest request) throws IOException {
     prepare(request);
-    return request.execute();
+    HttpResponse response = request.execute();
+
+    //String string = response.parseAsString();
+    // REMOVE or CAHNGE back.
+    //Log.i("HTTPResponse", "\n\nStart>>>>>>>>>>>>");
+    //Log.i("HTTPRespose", string);
+    //Log.i("HTTPResponse", "<<<<<<<<<<<<<<End\n\n");
+    return response;
   }
 
   protected final <T> T executeGet(GoogleUrl url, Class<T> parseAsType) throws IOException {

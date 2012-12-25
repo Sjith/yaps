@@ -1,18 +1,12 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<GridView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/photo_gridview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PhotosActivity" >
-
-    <GridView
-        android:id="@+id/photo_gridview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:horizontalSpacing="10dp"
-        android:numColumns="auto_fit"
-        android:stretchMode="columnWidth"
-        android:scrollbars="horizontal"
-        android:verticalSpacing="10dp" />
-
-</RelativeLayout>
+    android:gravity="center"
+    android:horizontalSpacing="10dp"
+    android:numColumns="auto_fit"
+    android:scrollbars="horizontal"
+    android:stretchMode="columnWidth"
+    android:verticalSpacing="10dp"
+    tools:context=".PhotosActivity" />

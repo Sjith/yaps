@@ -45,11 +45,13 @@ public class MainActivity extends Activity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                switch (which) {
+                                switch (PhotosSourceEnum.getEnum(which)) {
                                 // TODO
-                                case 0:
+                                case FACEBOOK:
                                     break;
-                                case 1:
+                                case PICASA:
+                                    break;
+                                case INVALID:
                                     break;
                                 }
                             }
@@ -66,15 +68,16 @@ public class MainActivity extends Activity {
                 displaySingleSelectAlertDialog(v.getContext(), R.string.select_source, R.array.sources, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                        // TODO
-                        case 0:
+                        switch (PhotosSourceEnum.getEnum(which)) {
+                        case FACEBOOK:
                             startActivity(new Intent(PhotosActivity.Extras.ACTION_SET_PHOTO_SOURCE_FACEBOOK, null, getApplicationContext(),
                                     PhotosActivity.class));
                             break;
-                        case 1:
+                        case PICASA:
                             startActivity(new Intent(PhotosActivity.Extras.ACTION_SET_PHOTO_SOURCE_PICASA, null, getApplicationContext(),
                                     PhotosActivity.class));
+                            break;
+                        case INVALID:
                             break;
                         }
                     }
@@ -100,12 +103,14 @@ public class MainActivity extends Activity {
                 displaySingleSelectAlertDialog(v.getContext(), R.string.select_test_page, R.array.sources, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                        case 0:
+                        switch (PhotosSourceEnum.getEnum(which)) {
+                        case FACEBOOK:
                             startActivity(new Intent(getApplicationContext(), FacebookTestActivity.class));
                             break;
-                        case 1:
+                        case PICASA:
                             startActivity(new Intent(getApplicationContext(), PicasaTestActivity.class));
+                            break;
+                        case INVALID:
                             break;
                         }
                     }

@@ -49,6 +49,11 @@
             android:name="com.ogunwale.android.app.yaps.PhotosActivity"
             android:label="@string/null_text" >
         </activity>
+
+        <!-- Providers -->
+        <provider
+            android:name=".PhotosProvider"
+            android:authorities="com.ogunwale.android.app.yaps.PhotosProvider" />
     </application>
 
 </manifest>
