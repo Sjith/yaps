@@ -1,4 +1,4 @@
-package com.ogunwale.android.app.yaps;
+package com.ogunwale.android.app.yaps.ui;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -7,6 +7,10 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.services.picasa.model.AlbumEntry;
 import com.google.api.services.picasa.model.UserFeed;
 import com.ogunwale.android.app.yaps.R;
+import com.ogunwale.android.app.yaps.R.layout;
+import com.ogunwale.android.app.yaps.R.menu;
+import com.ogunwale.android.app.yaps.content.PicasaDataAlbumListener;
+import com.ogunwale.android.app.yaps.content.PicasaDataTimerTask;
 
 import android.os.Bundle;
 import android.app.Activity;

@@ -1,4 +1,12 @@
-package com.ogunwale.android.app.yaps;
+package com.ogunwale.android.app.yaps.ui;
+
+import com.ogunwale.android.app.yaps.R;
+import com.ogunwale.android.app.yaps.R.array;
+import com.ogunwale.android.app.yaps.R.id;
+import com.ogunwale.android.app.yaps.R.layout;
+import com.ogunwale.android.app.yaps.R.menu;
+import com.ogunwale.android.app.yaps.R.string;
+import com.ogunwale.android.app.yaps.content.PhotosSourceEnum;
 
 import android.os.Bundle;
 import android.app.Activity;

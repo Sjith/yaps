@@ -1,4 +1,4 @@
-package com.ogunwale.android.app.yaps;
+package com.ogunwale.android.app.yaps.content;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -15,7 +15,9 @@ import com.google.api.services.picasa.PicasaClient;
 import com.google.api.services.picasa.PicasaUrl;
 import com.google.api.services.picasa.model.AlbumEntry;
 import com.google.api.services.picasa.model.UserFeed;
-import com.ogunwale.android.app.yaps.PicasaDataListener.FailureCause;
+import com.ogunwale.android.app.yaps.R;
+import com.ogunwale.android.app.yaps.R.string;
+import com.ogunwale.android.app.yaps.content.PicasaDataListener.FailureCause;
 
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
@@ -204,7 +206,7 @@ public class PicasaDataTimerTask extends TimerTask {
      * Account is successfully authenticated. Schedule the requested task.
      */
     private void accountAuthenticated() {
-        Timer timer = new Timer("PicasaDate: " + mRequestType.toString());
+        Timer timer = new Timer("PicasaData: " + mRequestType.toString());
         timer.schedule(this, 0);
     }
 
@@ -237,8 +239,6 @@ public class PicasaDataTimerTask extends TimerTask {
     }
 
     private Status getUserAlbums() {
-        PicasaDataAlbumListener listener = (PicasaDataAlbumListener) mListener;
-
         HttpTransport transport = new NetHttpTransport();
         HttpRequestFactory factory = transport.createRequestFactory(new HttpRequestInitializer() {
             @Override
@@ -262,13 +262,9 @@ public class PicasaDataTimerTask extends TimerTask {
         try {
             String nextLink = null;
             feed = picasaClient.executeGetUserFeed(url);
+            Timer timer = new Timer("AlbumFeedData");
             do {
-                listener.userFeed(feed);
-                // show albums
-                if (feed.albums != null) {
-                    for (AlbumEntry album : feed.albums)
-                        listener.albumEntry(album);
-                }
+                processAlbumFeedData(timer, (PicasaDataAlbumListener) mListener, feed);
                 nextLink = feed.getNextLink();
                 if (nextLink != null)
                     feed = picasaClient.executeGetUserFeed(new PicasaUrl(nextLink));
@@ -286,5 +282,25 @@ public class PicasaDataTimerTask extends TimerTask {
         } catch (IOException e) {
             return (Status.IO_EXCEPTION);
         }
+    }
+
+    /**
+     * Processes the album feed data on a separate thread to reduce slow down in
+     * getting more data from the server.
+     *
+     * @param timer
+     * @param feed
+     */
+    private void processAlbumFeedData(final Timer timer, final PicasaDataAlbumListener listener, final UserFeed feed) {
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                listener.userFeed(feed);
+                if (feed.albums != null) {
+                    for (AlbumEntry album : feed.albums)
+                        listener.albumEntry(album);
+                }
+            }
+        }, 0);
     }
 }

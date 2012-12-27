@@ -1,9 +1,15 @@
-package com.ogunwale.android.app.yaps;
+package com.ogunwale.android.app.yaps.ui;
 
 import java.util.Locale;
 
 import com.google.api.services.picasa.model.AlbumEntry;
 import com.google.api.services.picasa.model.UserFeed;
+import com.ogunwale.android.app.yaps.R;
+import com.ogunwale.android.app.yaps.content.PhotosProvider;
+import com.ogunwale.android.app.yaps.content.PhotosProviderAccess;
+import com.ogunwale.android.app.yaps.content.PhotosSourceEnum;
+import com.ogunwale.android.app.yaps.content.PicasaDataAlbumListener;
+import com.ogunwale.android.app.yaps.content.PicasaDataTimerTask;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -22,7 +28,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
 /**
@@ -56,7 +61,7 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
 
     private static PhotosSourceEnum mSourceSelection = PhotosSourceEnum.FACEBOOK;
 
-    private SimpleCursorAdapter mAdapter;
+    private PhotosSimpleCursorAdapter mAdapter;
 
     private GridView mGridView;
 
@@ -78,10 +83,10 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
         setContentView(R.layout.activity_photos);
 
         // Set-up cursor adapter
-        String[] from = new String[] { PhotosProvider.AlbumTable.COLUMN_NAME_COVER_URL, PhotosProvider.AlbumTable.COLUMN_NAME_TITLE,
+        String[] from = new String[] { PhotosProvider.AlbumTable.COLUMN_NAME_COVER_BITMAP, PhotosProvider.AlbumTable.COLUMN_NAME_TITLE,
                 PhotosProvider.AlbumTable.COLUMN_NAME_PHOTOS_COUNT };
         int[] to = new int[] { R.id.thumbnail_image, R.id.thumbnail_description, R.id.thumbnail_count };
-        mAdapter = new SimpleCursorAdapter(this, R.layout.layout_photo_thumbnail, null, from, to, 0);
+        mAdapter = new PhotosSimpleCursorAdapter(this, R.layout.layout_photo_thumbnail, null, from, to, 0);
 
         // Set-up thumbnail grid
         mGridView = (GridView) findViewById(R.id.photo_gridview);
@@ -220,7 +225,7 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // This is called when a new Loader needs to be created. We
         // only has one Loader, so we don't care about the ID.
-        String[] projection = new String[] { PhotosProvider.AlbumTable._ID, PhotosProvider.AlbumTable.COLUMN_NAME_COVER_URL,
+        String[] projection = new String[] { PhotosProvider.AlbumTable._ID, PhotosProvider.AlbumTable.COLUMN_NAME_COVER_BITMAP,
                 PhotosProvider.AlbumTable.COLUMN_NAME_TITLE, PhotosProvider.AlbumTable.COLUMN_NAME_PHOTOS_COUNT };
         String selection = String.format(Locale.getDefault(), "%s=?", PhotosProvider.AlbumTable.COLUMN_NAME_SOURCE);
         String[] selectionArgs = new String[] { String.valueOf(mSourceSelection.getValue()) };

@@ -1,4 +1,4 @@
-package com.ogunwale.android.app.yaps;
+package com.ogunwale.android.app.yaps.ui;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.widget.TextView;
 import com.facebook.*;
 import com.facebook.model.*;
+import com.ogunwale.android.app.yaps.R;
+import com.ogunwale.android.app.yaps.R.id;
+import com.ogunwale.android.app.yaps.R.layout;
 
 public class FacebookTestActivity extends Activity {
 

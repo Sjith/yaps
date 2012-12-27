@@ -1,4 +1,4 @@
-package com.ogunwale.android.app.yaps;
+package com.ogunwale.android.app.yaps.content;
 
 import com.google.api.services.picasa.model.AlbumEntry;
 import com.google.api.services.picasa.model.UserFeed;

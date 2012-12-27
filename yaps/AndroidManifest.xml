@@ -20,7 +20,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.ogunwale.android.app.yaps.MainActivity"
+            android:name="com.ogunwale.android.app.yaps.ui.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,11 +29,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.ogunwale.android.app.yaps.PicasaTestActivity"
+            android:name="com.ogunwale.android.app.yaps.ui.PicasaTestActivity"
             android:label="picasa test" >
         </activity>
         <activity
-            android:name="com.ogunwale.android.app.yaps.FacebookTestActivity"
+            android:name="com.ogunwale.android.app.yaps.ui.FacebookTestActivity"
             android:label="facebook test" >
         </activity>
 
@@ -46,14 +46,14 @@
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.ogunwale.android.app.yaps.PhotosActivity"
+            android:name="com.ogunwale.android.app.yaps.ui.PhotosActivity"
             android:label="@string/null_text" >
         </activity>
 
         <!-- Providers -->
         <provider
-            android:name=".PhotosProvider"
-            android:authorities="com.ogunwale.android.app.yaps.PhotosProvider" />
+            android:name=".content.PhotosProvider"
+            android:authorities="com.ogunwale.android.app.yaps.content.PhotosProvider" />
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.ogunwale.android.app.yaps;
+package com.ogunwale.android.app.yaps.content;
 
 import android.content.Context;
 import android.content.SharedPreferences;

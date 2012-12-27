@@ -90,13 +90,13 @@ public final class PicasaClient extends GDataXmlClient {
 
   public AlbumFeed executeGetAlbumFeed(PicasaUrl url) throws IOException {
     url.kinds = "photo";
-    url.maxResults = 5;
+    url.maxResults = 10;
     return executeGet(url, AlbumFeed.class);
   }
 
   public UserFeed executeGetUserFeed(PicasaUrl url) throws IOException {
     url.kinds = "album";
-    url.maxResults = 3;
+    url.maxResults = 10;
     return executeGet(url, UserFeed.class);
   }
 

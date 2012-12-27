@@ -1,5 +1,10 @@
-package com.ogunwale.android.app.yaps;
+package com.ogunwale.android.app.yaps.content;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Locale;
 
 import com.google.api.services.picasa.model.AlbumEntry;
@@ -9,6 +14,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 /**
  * Class provides access to reading and writing information from the photos
@@ -18,6 +24,8 @@ import android.net.Uri;
  *
  */
 public class PhotosProviderAccess {
+
+    private static final String sTAG = PhotosProviderAccess.class.getSimpleName();
 
     /**
      * Class is a collection of accesser methods for album data in the database.
@@ -118,8 +126,46 @@ public class PhotosProviderAccess {
             values.put(PhotosProvider.AlbumTable.COLUMN_NAME_UPDATED, album.updated);
             values.put(PhotosProvider.AlbumTable.COLUMN_NAME_LOCATION, album.location);
             values.put(PhotosProvider.AlbumTable.COLUMN_NAME_COVER_URL, album.mediaGroup.thumbnail.url);
+            values.put(PhotosProvider.AlbumTable.COLUMN_NAME_COVER_BITMAP, getAlbumCover(album.mediaGroup.thumbnail.url));
 
             return values;
+        }
+
+        private static byte[] getAlbumCover(String url) {
+            byte[] cover = null;
+            InputStream in = null;
+            ByteArrayOutputStream out = null;
+
+            try {
+                in = new BufferedInputStream(new URL(url).openStream());
+                out = new ByteArrayOutputStream();
+                byte[] buffer = new byte[8 * 1024];
+                int bytesRead;
+
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+
+                cover = out.toByteArray();
+            } catch (IOException e) {
+                Log.e(sTAG, "Error getting album cover: " + url);
+                cover = null;
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (IOException e) {
+                    }
+                }
+                if (out != null) {
+                    try {
+                        out.close();
+                    } catch (IOException e) {
+                    }
+                }
+            }
+
+            return cover;
         }
     }
 }
