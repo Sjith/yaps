@@ -6,6 +6,7 @@ import java.util.Locale;
 import com.facebook.Session;
 import com.facebook.UiLifecycleHelper;
 import com.google.api.services.picasa.model.AlbumEntry;
+import com.jess.ui.TwoWayGridView;
 import com.ogunwale.android.app.yaps.R;
 import com.ogunwale.android.app.yaps.content.FacebookGraphAlbum;
 import com.ogunwale.android.app.yaps.content.PhotosProvider;
@@ -31,10 +32,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.GridView;
 import android.widget.Spinner;
 
 /**
@@ -88,7 +87,7 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
 
     private PhotosSimpleCursorAdapter mAdapter;
 
-    private GridView mGridView;
+    private TwoWayGridView mGridView;
 
     private UiLifecycleHelper mFacebookUiHelper;
 
@@ -110,13 +109,14 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
         mAdapter = new PhotosSimpleCursorAdapter(this, R.layout.layout_photo_thumbnail, null, from, to, 0);
 
         // Set-up thumbnail grid
-        mGridView = (GridView) findViewById(R.id.photo_gridview);
+        mGridView = (TwoWayGridView) findViewById(R.id.photo_gridview);
         mGridView.setAdapter(mAdapter);
-        mGridView.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                // TODO
-            }
-        });
+//        mGridView.setOnClickListener(new TwoWayAdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(TwoWayAdapterView<?> parent, View view, int position, long id) {
+                // TODO Auto-generated method stub
+//            }
+//        });
 
         // Request/update album data from source
         updateAlbumData();
