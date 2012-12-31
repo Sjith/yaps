@@ -1,15 +1,18 @@
 package com.ogunwale.android.app.yaps.ui;
 
+import java.util.List;
 import java.util.Locale;
 
+import com.facebook.Session;
+import com.facebook.UiLifecycleHelper;
 import com.google.api.services.picasa.model.AlbumEntry;
-import com.google.api.services.picasa.model.UserFeed;
 import com.ogunwale.android.app.yaps.R;
+import com.ogunwale.android.app.yaps.content.FacebookGraphAlbum;
 import com.ogunwale.android.app.yaps.content.PhotosProvider;
 import com.ogunwale.android.app.yaps.content.PhotosProviderAccess;
 import com.ogunwale.android.app.yaps.content.PhotosSourceEnum;
-import com.ogunwale.android.app.yaps.content.PicasaDataAlbumListener;
-import com.ogunwale.android.app.yaps.content.PicasaDataTimerTask;
+import com.ogunwale.android.app.yaps.content.RemoteDataAlbumListener;
+import com.ogunwale.android.app.yaps.content.RemoteDataRequest;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -65,9 +68,14 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
 
     private GridView mGridView;
 
+    private UiLifecycleHelper mFacebookUiHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mFacebookUiHelper = new UiLifecycleHelper(this, null);
+        mFacebookUiHelper.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
 
@@ -117,32 +125,38 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
     private void updateAlbumData() {
         switch (mSourceSelection) {
         case FACEBOOK:
-            break;
-        case INVALID:
-            break;
         case PICASA: {
-            new PicasaDataTimerTask(this, false, new PicasaDataAlbumListener() {
+            RemoteDataRequest.RequestType requestType = (mSourceSelection == PhotosSourceEnum.FACEBOOK) ? RemoteDataRequest.RequestType.FACEBOOK_ALBUMS
+                    : RemoteDataRequest.RequestType.PICASA_ALBUMS;
+
+            new RemoteDataRequest(this, false, requestType, new RemoteDataAlbumListener() {
                 @Override
-                public void RequestFailed(FailureCause cause) {
+                public void RequestComplete(Status status) {
                     // TODO
                 }
 
                 @Override
-                public void RequestComplete() {
-                    // TODO
+                public void facebookAlbums(List<FacebookGraphAlbum> albums, Session session) {
+                    if (albums != null) {
+                        for (FacebookGraphAlbum album : albums) {
+                            PhotosProviderAccess.Album.updateIfChanged(getContentResolver(), album, session);
+                        }
+                    }
                 }
 
                 @Override
-                public void userFeed(UserFeed feed) {
-                }
+                public void picasaAlbums(List<AlbumEntry> albums) {
+                    if (albums != null) {
+                        for (AlbumEntry album : albums) {
+                            PhotosProviderAccess.Album.updateIfChanged(getContentResolver(), album);
+                        }
+                    }
 
-                @Override
-                public void albumEntry(AlbumEntry album) {
-                    PhotosProviderAccess.Album.updateIfChanged(getContentResolver(), album);
                 }
             });
             break;
         }
+        case INVALID:
         default:
             break;
 
@@ -255,5 +269,34 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
         // above is about to be closed. We need to make sure we are no longer
         // using it.
         mAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mFacebookUiHelper.onResume();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mFacebookUiHelper.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mFacebookUiHelper.onPause();
+    }
+
+    protected void onDestory() {
+        super.onDestroy();
+        mFacebookUiHelper.onDestroy();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mFacebookUiHelper.onActivityResult(requestCode, resultCode, data);
     }
 }

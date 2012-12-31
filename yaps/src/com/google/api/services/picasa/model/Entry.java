@@ -24,6 +24,9 @@ import java.util.List;
  */
 public class Entry implements Cloneable {
 
+  @Key
+  public String id;
+
   @Key("@gd:etag")
   public String etag;
 

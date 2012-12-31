@@ -44,7 +44,7 @@ public class PhotosProvider extends ContentProvider {
      * @author ogunwale
      *
      */
-    public static final class AlbumTable implements BaseColumns {
+    public interface AlbumTable extends BaseColumns {
         // Table name
         public static final String TABLE_NAME = "album";
 
@@ -53,6 +53,7 @@ public class PhotosProvider extends ContentProvider {
         public static final String CONTENT_ITEMTYPE = "vnd.android.cursor.dir/vnd.garmin.album";
 
         // columns
+        public static final String COLUMN_NAME_EXTERNAL_ID = "external_id";
         public static final String COLUMN_NAME_SOURCE = "source";
         public static final String COLUMN_NAME_TITLE = "title";
         public static final String COLUMN_NAME_UPDATED = "updated";
@@ -69,6 +70,7 @@ public class PhotosProvider extends ContentProvider {
         // Create statement
         // @formatter:off
         public static final String CREATE_ENTRIES = "CREATE TABLE " + TABLE_NAME + " (" + _ID + " INTEGER PRIMARY KEY," +
+                COLUMN_NAME_EXTERNAL_ID + TEXT_TYPE + COMMA_SEP +
                 COLUMN_NAME_SOURCE + INTEGER_TYPE + COMMA_SEP +
                 COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +
                 COLUMN_NAME_UPDATED + TEXT_TYPE + COMMA_SEP +
@@ -87,9 +89,6 @@ public class PhotosProvider extends ContentProvider {
         // Delete statement
         public static final String DELETE_ENTRIES = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-        // Prevents class from being instantiated
-        private AlbumTable() {
-        }
     }
 
     /**

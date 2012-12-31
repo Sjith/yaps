@@ -1,11 +1,6 @@
 package com.ogunwale.android.app.yaps.ui;
 
 import com.ogunwale.android.app.yaps.R;
-import com.ogunwale.android.app.yaps.R.array;
-import com.ogunwale.android.app.yaps.R.id;
-import com.ogunwale.android.app.yaps.R.layout;
-import com.ogunwale.android.app.yaps.R.menu;
-import com.ogunwale.android.app.yaps.R.string;
 import com.ogunwale.android.app.yaps.content.PhotosSourceEnum;
 
 import android.os.Bundle;
@@ -113,10 +108,12 @@ public class MainActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         switch (PhotosSourceEnum.getEnum(which)) {
                         case FACEBOOK:
-                            startActivity(new Intent(getApplicationContext(), FacebookTestActivity.class));
+                            startActivity(new Intent(PhotosActivity.Extras.ACTION_SET_PHOTO_SOURCE_FACEBOOK, null, getApplicationContext(),
+                                    TestActivity.class));
                             break;
                         case PICASA:
-                            startActivity(new Intent(getApplicationContext(), PicasaTestActivity.class));
+                            startActivity(new Intent(PhotosActivity.Extras.ACTION_SET_PHOTO_SOURCE_PICASA, null, getApplicationContext(),
+                                    TestActivity.class));
                             break;
                         case INVALID:
                             break;
@@ -141,31 +138,13 @@ public class MainActivity extends Activity {
      */
     private void displaySingleSelectAlertDialog(Context context, int titleRId, int selectionRId, final DialogInterface.OnClickListener onOkay) {
 
-        // final int[] selection = new int[] { -1 };
-
         new AlertDialog.Builder(context).setTitle(titleRId).setSingleChoiceItems(selectionRId, -1, new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 onOkay.onClick(dialog, which);
                 dialog.dismiss();
-                // selection[0] = which;
             }
-            // }).setPositiveButton(R.string.okay, new
-            // DialogInterface.OnClickListener() {
-            //
-            // @Override
-            // public void onClick(DialogInterface dialog, int which) {
-            // onOkay.onClick(dialog, selection[0]);
-            // dialog.dismiss();
-            // }
-            // }).setNegativeButton(R.string.cancel, new
-            // DialogInterface.OnClickListener() {
-            //
-            // @Override
-            // public void onClick(DialogInterface dialog, int which) {
-            // dialog.dismiss();
-            // }
         }).show();
 
     }

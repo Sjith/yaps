@@ -1610,7 +1610,7 @@ public class Request {
         return Request.defaultBatchApplicationId;
     }
 
-    private static <T extends GraphObject> List<T> typedListFromResponse(Response response, Class<T> clazz) {
+    protected static <T extends GraphObject> List<T> typedListFromResponse(Response response, Class<T> clazz) {
         GraphMultiResult multiResult = response.getGraphObjectAs(GraphMultiResult.class);
         if (multiResult == null) {
             return null;

@@ -29,12 +29,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.ogunwale.android.app.yaps.ui.PicasaTestActivity"
-            android:label="picasa test" >
-        </activity>
-        <activity
-            android:name="com.ogunwale.android.app.yaps.ui.FacebookTestActivity"
-            android:label="facebook test" >
+            android:name="com.ogunwale.android.app.yaps.ui.TestActivity"
+            android:label="test" >
         </activity>
 
         <meta-data
