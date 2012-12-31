@@ -63,8 +63,8 @@ public class PhotosProviderAccess {
             Cursor cursor = null;
             String[] projection = new String[] { PhotosProvider.AlbumTable._ID, PhotosProvider.AlbumTable.COLUMN_NAME_UPDATED };
             String selection = String.format(Locale.getDefault(), "%s=? AND %s=?", PhotosProvider.AlbumTable.COLUMN_NAME_SOURCE,
-                    PhotosProvider.AlbumTable.COLUMN_NAME_LINK_SELF);
-            String[] selectionArgs = new String[] { String.valueOf(PhotosSourceEnum.PICASA.getValue()), album.getSelfLink() };
+                    PhotosProvider.AlbumTable.COLUMN_NAME_EXTERNAL_ID);
+            String[] selectionArgs = new String[] { String.valueOf(PhotosSourceEnum.PICASA.getValue()), album.id };
 
             cursor = cr.query(PhotosProvider.AlbumTable.CONTENT_URI, projection, selection, selectionArgs, null);
 
@@ -105,7 +105,7 @@ public class PhotosProviderAccess {
             Cursor cursor = null;
             String[] projection = new String[] { PhotosProvider.AlbumTable._ID, PhotosProvider.AlbumTable.COLUMN_NAME_UPDATED };
             String selection = String.format(Locale.getDefault(), "%s=? AND %s=?", PhotosProvider.AlbumTable.COLUMN_NAME_SOURCE,
-                    PhotosProvider.AlbumTable.COLUMN_NAME_LINK_SELF);
+                    PhotosProvider.AlbumTable.COLUMN_NAME_EXTERNAL_ID);
             String[] selectionArgs = new String[] { String.valueOf(PhotosSourceEnum.FACEBOOK.getValue()), album.getId() };
 
             cursor = cr.query(PhotosProvider.AlbumTable.CONTENT_URI, projection, selection, selectionArgs, null);

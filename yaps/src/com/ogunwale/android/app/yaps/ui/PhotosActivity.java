@@ -13,15 +13,19 @@ import com.ogunwale.android.app.yaps.content.PhotosProviderAccess;
 import com.ogunwale.android.app.yaps.content.PhotosSourceEnum;
 import com.ogunwale.android.app.yaps.content.RemoteDataAlbumListener;
 import com.ogunwale.android.app.yaps.content.RemoteDataRequest;
+import com.ogunwale.android.app.yaps.content.SettingsManager;
 
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.ActionProvider;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -62,7 +66,25 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
         public static final String ACTION_SET_PHOTO_SOURCE_FACEBOOK = INTENT_PREFIX + "ACTION_SET_PHOTO_SOURCE_FACEBOOK";
     }
 
-    private static PhotosSourceEnum mSourceSelection = PhotosSourceEnum.FACEBOOK;
+    /**
+     * Processes local broadcast for this activity
+     */
+    private BroadcastReceiver mLocalBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null) {
+                String action = intent.getAction();
+
+                if (Extras.ACTION_SET_PHOTO_SOURCE_FACEBOOK.equals(action) && mSourceSelection != PhotosSourceEnum.FACEBOOK) {
+                    changeSource(PhotosSourceEnum.FACEBOOK);
+                } else if (Extras.ACTION_SET_PHOTO_SOURCE_PICASA.equals(action) && mSourceSelection != PhotosSourceEnum.PICASA) {
+                    changeSource(PhotosSourceEnum.PICASA);
+                }
+            }
+        }
+    };
+
+    private static PhotosSourceEnum mSourceSelection;
 
     private PhotosSimpleCursorAdapter mAdapter;
 
@@ -77,16 +99,7 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
         mFacebookUiHelper = new UiLifecycleHelper(this, null);
         mFacebookUiHelper.onCreate(savedInstanceState);
 
-        Intent intent = getIntent();
-
-        if (intent != null) {
-            String action = intent.getAction();
-
-            if (Extras.ACTION_SET_PHOTO_SOURCE_PICASA.equals(action))
-                mSourceSelection = PhotosSourceEnum.PICASA;
-            else if (Extras.ACTION_SET_PHOTO_SOURCE_FACEBOOK.equals(action))
-                mSourceSelection = PhotosSourceEnum.FACEBOOK;
-        }
+        mSourceSelection = SettingsManager.getInstance(getApplicationContext()).getAlbumSelection();
 
         setContentView(R.layout.activity_photos);
 
@@ -110,6 +123,12 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
 
         // Prepare the database loader.
         getLoaderManager().initLoader(0, null, this);
+
+        // Register for local boardcasts
+        IntentFilter iFilter = new IntentFilter();
+        iFilter.addAction(Extras.ACTION_SET_PHOTO_SOURCE_FACEBOOK);
+        iFilter.addAction(Extras.ACTION_SET_PHOTO_SOURCE_PICASA);
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mLocalBroadcastReceiver, iFilter);
     }
 
     @Override
@@ -195,9 +214,23 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
 
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    // TODO Auto-generated method stub
                     if (position != mSourceSelection.getValue()) {
-                        // changeSource(PhotosSourceEnum.getEnum(position));
+                        Intent intent = new Intent();
+
+                        switch (PhotosSourceEnum.getEnum(position)) {
+                        case FACEBOOK:
+                            intent.setAction(Extras.ACTION_SET_PHOTO_SOURCE_FACEBOOK);
+                            break;
+                        case PICASA:
+                            intent.setAction(Extras.ACTION_SET_PHOTO_SOURCE_PICASA);
+                            break;
+                        case INVALID:
+                        default:
+                            break;
+                        }
+
+                        if (intent.getAction() != null)
+                            LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
                     }
                 }
 
@@ -228,11 +261,15 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
     }
 
     /**
-     * Change photo srouce
+     * Change photo source
      */
     private void changeSource(PhotosSourceEnum source) {
-        mSourceSelection = source;
-        getLoaderManager().restartLoader(0, null, this);
+        if (source != mSourceSelection) {
+            mSourceSelection = source;
+            SettingsManager.getInstance(getApplicationContext()).setAlbumSelection(mSourceSelection);
+            updateAlbumData();
+            getLoaderManager().restartLoader(0, null, this);
+        }
     }
 
     @Override
@@ -292,6 +329,7 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
     protected void onDestory() {
         super.onDestroy();
         mFacebookUiHelper.onDestroy();
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mLocalBroadcastReceiver);
     }
 
     @Override

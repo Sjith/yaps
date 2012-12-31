@@ -68,24 +68,7 @@ public class MainActivity extends Activity {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                displaySingleSelectAlertDialog(v.getContext(), R.string.select_source, R.array.sources, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (PhotosSourceEnum.getEnum(which)) {
-                        case FACEBOOK:
-                            startActivity(new Intent(PhotosActivity.Extras.ACTION_SET_PHOTO_SOURCE_FACEBOOK, null, getApplicationContext(),
-                                    PhotosActivity.class));
-                            break;
-                        case PICASA:
-                            startActivity(new Intent(PhotosActivity.Extras.ACTION_SET_PHOTO_SOURCE_PICASA, null, getApplicationContext(),
-                                    PhotosActivity.class));
-                            break;
-                        case INVALID:
-                            break;
-                        }
-                    }
-
-                });
+                startActivity(new Intent(getApplicationContext(), PhotosActivity.class));
             }
         });
 

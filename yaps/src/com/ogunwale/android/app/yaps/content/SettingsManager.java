@@ -21,6 +21,8 @@ public class SettingsManager {
 
     private static final String LAST_FACEBOOK_ALBUM_UPDATE_TIME_KEY = "LAST_FACEBOOK_ALBUM_UPDATE_TIME_KEY";
 
+    private static final String ALBUM_SELECTION_KEY = "ALBUM_SELECTION_KEY";
+
     private SettingsManager(Context context) {
         mSharedPreferences = context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE);
     }
@@ -45,5 +47,13 @@ public class SettingsManager {
 
     public long getLastFacebookAlbumUpdateTime() {
         return (mSharedPreferences.getLong(LAST_FACEBOOK_ALBUM_UPDATE_TIME_KEY, -1));
+    }
+
+    public void setAlbumSelection(PhotosSourceEnum value) {
+        mSharedPreferences.edit().putInt(ALBUM_SELECTION_KEY, value.getValue()).commit();
+    }
+
+    public PhotosSourceEnum getAlbumSelection() {
+        return PhotosSourceEnum.getEnum(mSharedPreferences.getInt(ALBUM_SELECTION_KEY, PhotosSourceEnum.PICASA.getValue()));
     }
 }
