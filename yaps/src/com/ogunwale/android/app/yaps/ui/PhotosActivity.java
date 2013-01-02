@@ -34,6 +34,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 /**
@@ -105,18 +106,20 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
         // Set-up cursor adapter
         String[] from = new String[] { PhotosProvider.AlbumTable.COLUMN_NAME_COVER_BITMAP, PhotosProvider.AlbumTable.COLUMN_NAME_TITLE,
                 PhotosProvider.AlbumTable.COLUMN_NAME_PHOTOS_COUNT };
-        int[] to = new int[] { R.id.thumbnail_image, R.id.thumbnail_description, R.id.thumbnail_count };
+        int[] to = new int[] { R.id.thumbnail_layout, R.id.thumbnail_description, R.id.thumbnail_count };
         mAdapter = new PhotosSimpleCursorAdapter(this, R.layout.layout_photo_thumbnail, null, from, to, 0);
 
         // Set-up thumbnail grid
         mGridView = (TwoWayGridView) findViewById(R.id.photo_gridview);
         mGridView.setAdapter(mAdapter);
-//        mGridView.setOnClickListener(new TwoWayAdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(TwoWayAdapterView<?> parent, View view, int position, long id) {
-                // TODO Auto-generated method stub
-//            }
-//        });
+        // mGridView.setOnClickListener(new
+        // TwoWayAdapterView.OnItemClickListener() {
+        // @Override
+        // public void onItemClick(TwoWayAdapterView<?> parent, View view, int
+        // position, long id) {
+        // TODO Auto-generated method stub
+        // }
+        // });
 
         // Request/update album data from source
         updateAlbumData();
@@ -124,7 +127,7 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
         // Prepare the database loader.
         getLoaderManager().initLoader(0, null, this);
 
-        // Register for local boardcasts
+        // Register for local broadcasts
         IntentFilter iFilter = new IntentFilter();
         iFilter.addAction(Extras.ACTION_SET_PHOTO_SOURCE_FACEBOOK);
         iFilter.addAction(Extras.ACTION_SET_PHOTO_SOURCE_PICASA);
@@ -292,12 +295,9 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
         // old cursor once we return.)
         mAdapter.swapCursor(data);
 
-        // The list should now be shown.
-        // if (isResumed()) {
-        // setListShown(true);
-        // } else {
-        // setListShownNoAnimation(true);
-        // }
+        // TODO
+//        ProgressBar pb = (ProgressBar) findViewById(R.id.photo_progress_bar);
+//        pb.setVisibility(View.INVISIBLE);
     }
 
     @Override

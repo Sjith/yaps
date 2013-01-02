@@ -1622,7 +1622,7 @@ public class TwoWayGridView extends TwoWayAbsListView {
 
 				TwoWayAbsListView.LayoutParams p = (TwoWayAbsListView.LayoutParams)child.getLayoutParams();
 				if (p == null) {
-					p = new TwoWayAbsListView.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+					p = new TwoWayAbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 							ViewGroup.LayoutParams.WRAP_CONTENT, 0);
 					child.setLayoutParams(p);
 				}
@@ -1905,7 +1905,7 @@ public class TwoWayGridView extends TwoWayAbsListView {
 			// some up...
 			TwoWayAbsListView.LayoutParams p = (TwoWayAbsListView.LayoutParams)child.getLayoutParams();
 			if (p == null) {
-				p = new TwoWayAbsListView.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+				p = new TwoWayAbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 						ViewGroup.LayoutParams.WRAP_CONTENT, 0);
 			}
 			p.viewType = mAdapter.getItemViewType(position);
@@ -2872,7 +2872,7 @@ public class TwoWayGridView extends TwoWayAbsListView {
 				TwoWayAbsListView.LayoutParams p = (TwoWayAbsListView.LayoutParams)child.getLayoutParams();
 				if (p == null) {
 					p = new TwoWayAbsListView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-							ViewGroup.LayoutParams.FILL_PARENT, 0);
+							ViewGroup.LayoutParams.MATCH_PARENT, 0);
 					child.setLayoutParams(p);
 				}
 				p.viewType = mAdapter.getItemViewType(0);
@@ -3227,7 +3227,7 @@ public class TwoWayGridView extends TwoWayAbsListView {
 			TwoWayAbsListView.LayoutParams p = (TwoWayAbsListView.LayoutParams)child.getLayoutParams();
 			if (p == null) {
 				p = new TwoWayAbsListView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-						ViewGroup.LayoutParams.FILL_PARENT, 0);
+						ViewGroup.LayoutParams.MATCH_PARENT, 0);
 			}
 			p.viewType = mAdapter.getItemViewType(position);
 

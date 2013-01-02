@@ -447,7 +447,7 @@ ViewTreeObserver.OnTouchModeChangeListener {
 	//private boolean mGlobalLayoutListenerAddedFilter;
 
 	private int mTouchSlop;
-	private float mDensityScale;
+	//private float mDensityScale;
 
 	//private InputConnection mDefInputConnection;
 	//private InputConnectionWrapper mPublicInputConnection;
@@ -473,13 +473,13 @@ ViewTreeObserver.OnTouchModeChangeListener {
 	 * ID of the active pointer. This is used to retain consistency during
 	 * drags/flings if multiple pointers are used.
 	 */
-	private int mActivePointerId = INVALID_POINTER;
+	//private int mActivePointerId = INVALID_POINTER;
 
 	/**
 	 * Sentinel value for no current active pointer.
 	 * Used by {@link #mActivePointerId}.
 	 */
-	private static final int INVALID_POINTER = -1;
+	//private static final int INVALID_POINTER = -1;
 
 	/**
 	 * Interface definition for a callback to be invoked when the list or grid
@@ -601,7 +601,7 @@ ViewTreeObserver.OnTouchModeChangeListener {
 		final ViewConfiguration configuration = ViewConfiguration.get(mContext);
 		mTouchSlop = configuration.getScaledTouchSlop();
 		mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
-		mDensityScale = getContext().getResources().getDisplayMetrics().density;
+		//mDensityScale = getContext().getResources().getDisplayMetrics().density;
 		mPortraitOrientation = (getResources().getConfiguration().orientation !=
 			Configuration.ORIENTATION_LANDSCAPE);
 		mScrollVertically = true;
@@ -1554,7 +1554,7 @@ ViewTreeObserver.OnTouchModeChangeListener {
 
 	@Override
 	protected void dispatchDraw(Canvas canvas) {
-		int saveCount = 0;
+		//int saveCount = 0;
 		//TODO????
 		/*
         final boolean clipToPadding = (mGroupFlags & CLIP_TO_PADDING_MASK) == CLIP_TO_PADDING_MASK;
@@ -4075,7 +4075,7 @@ ViewTreeObserver.OnTouchModeChangeListener {
 					mVelocityTracker = null;
 				}
 
-				mActivePointerId = INVALID_POINTER;
+				//mActivePointerId = INVALID_POINTER;
 
 				if (PROFILE_SCROLLING) {
 					if (mScrollProfilingStarted) {
@@ -4105,7 +4105,7 @@ ViewTreeObserver.OnTouchModeChangeListener {
 					mVelocityTracker = null;
 				}
 
-				mActivePointerId = INVALID_POINTER;
+				//mActivePointerId = INVALID_POINTER;
 				break;
 			}
 
@@ -4169,7 +4169,7 @@ ViewTreeObserver.OnTouchModeChangeListener {
 
 				case MotionEvent.ACTION_UP: {
 					mTouchMode = TOUCH_MODE_REST;
-					mActivePointerId = INVALID_POINTER;
+					//mActivePointerId = INVALID_POINTER;
 					reportScrollStateChange(OnScrollListener.SCROLL_STATE_IDLE);
 					break;
 				}
@@ -4768,7 +4768,7 @@ ViewTreeObserver.OnTouchModeChangeListener {
 
 				case MotionEvent.ACTION_UP: {
 					mTouchMode = TOUCH_MODE_REST;
-					mActivePointerId = INVALID_POINTER;
+					//mActivePointerId = INVALID_POINTER;
 					reportScrollStateChange(OnScrollListener.SCROLL_STATE_IDLE);
 					break;
 				}
@@ -5015,7 +5015,7 @@ ViewTreeObserver.OnTouchModeChangeListener {
 						mVelocityTracker = null;
 					}
 
-					mActivePointerId = INVALID_POINTER;
+					//mActivePointerId = INVALID_POINTER;
 
 					if (PROFILE_SCROLLING) {
 						if (mScrollProfilingStarted) {
@@ -5045,7 +5045,7 @@ ViewTreeObserver.OnTouchModeChangeListener {
 						mVelocityTracker = null;
 					}
 
-					mActivePointerId = INVALID_POINTER;
+					//mActivePointerId = INVALID_POINTER;
 					break;
 				}
 			}
