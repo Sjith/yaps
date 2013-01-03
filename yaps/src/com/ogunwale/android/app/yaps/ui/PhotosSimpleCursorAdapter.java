@@ -54,10 +54,16 @@ public class PhotosSimpleCursorAdapter extends SimpleCursorAdapter {
                         setViewText((TextView) v, text);
                     } else if (v instanceof ImageView) {
                         byte[] blob = cursor.getBlob(from[i]);
-                        setViewImage((ImageView) v, blob);
+                        if (blob != null && blob.length > 0)
+                            setViewImage((ImageView) v, blob);
+                        else
+                            setDefaultBackground(context, (RelativeLayout) v);
                     } else if (v instanceof RelativeLayout) {
                         byte[] blob = cursor.getBlob(from[i]);
-                        setLayoutBackground(context, (RelativeLayout) v, blob);
+                        if (blob != null && blob.length > 0)
+                            setLayoutBackground(context, (RelativeLayout) v, blob);
+                        else
+                            setDefaultBackground(context, (RelativeLayout) v);
                     } else {
                         throw new IllegalStateException(v.getClass().getName() + " is not a "
                                 + " view that can be bounds by this SimpleCursorAdapter");
@@ -67,12 +73,17 @@ public class PhotosSimpleCursorAdapter extends SimpleCursorAdapter {
         }
     }
 
-    public void setViewImage(ImageView v, byte[] value) {
+    private void setDefaultBackground(Context context, RelativeLayout v) {
+        v.setBackgroundResource(android.R.drawable.screen_background_dark_transparent);
+    }
+
+    private void setViewImage(ImageView v, byte[] value) {
         v.setImageBitmap(BitmapFactory.decodeByteArray(value, 0, value.length));
     }
 
-    public void setLayoutBackground(Context context, RelativeLayout v, byte[] value) {
+    private void setLayoutBackground(Context context, RelativeLayout v, byte[] value) {
         Bitmap bitmap = BitmapFactory.decodeByteArray(value, 0, value.length);
         v.setBackground(new BitmapDrawable(v.getContext().getResources(), bitmap));
     }
+
 }

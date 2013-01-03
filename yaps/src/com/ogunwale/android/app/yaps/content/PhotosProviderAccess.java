@@ -158,7 +158,7 @@ public class PhotosProviderAccess {
             values.put(PhotosProvider.AlbumTable.COLUMN_NAME_EXTERNAL_ID, album.getId());
             values.put(PhotosProvider.AlbumTable.COLUMN_NAME_ACCESS, album.getPrivacy());
             values.put(PhotosProvider.AlbumTable.COLUMN_NAME_LINK_SELF, album.getLink());
-            values.put(PhotosProvider.AlbumTable.COLUMN_NAME_PHOTOS_COUNT, Integer.valueOf(album.getCount()));
+            values.put(PhotosProvider.AlbumTable.COLUMN_NAME_PHOTOS_COUNT, (album.getCount() == null) ? 0 : Integer.valueOf(album.getCount()));
             values.put(PhotosProvider.AlbumTable.COLUMN_NAME_SOURCE, PhotosSourceEnum.FACEBOOK.getValue());
             values.put(PhotosProvider.AlbumTable.COLUMN_NAME_SUMMARY, album.getDescription());
             values.put(PhotosProvider.AlbumTable.COLUMN_NAME_TITLE, album.getName());
@@ -167,8 +167,10 @@ public class PhotosProviderAccess {
 
             Response response = FacebookRequest.newPhotoRequest(session, album.getCoverPhoto(), null).executeAndWait();
             FacebookGraphPhoto coverPhoto = response.getGraphObjectAs(FacebookGraphPhoto.class);
-            values.put(PhotosProvider.AlbumTable.COLUMN_NAME_COVER_URL, coverPhoto.getPicture());
-            values.put(PhotosProvider.AlbumTable.COLUMN_NAME_COVER_BITMAP, getAlbumCover(coverPhoto.getPicture()));
+            if (coverPhoto != null && coverPhoto.getPicture() != null) {
+                values.put(PhotosProvider.AlbumTable.COLUMN_NAME_COVER_URL, coverPhoto.getPicture());
+                values.put(PhotosProvider.AlbumTable.COLUMN_NAME_COVER_BITMAP, getAlbumCover(coverPhoto.getPicture()));
+            }
 
             return values;
         }

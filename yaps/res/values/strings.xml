@@ -10,9 +10,6 @@
     <string name="image">image</string>
 
     <!-- Common translate strings -->
-    <string name="Albums">Albums</string>
-    <string name="People">People</string>
-    <string name="Locations">Location</string>
 
     <!-- Main Activity strings -->
     <string name="transfer_albums_photos">Transfer Albums/Photos</string>

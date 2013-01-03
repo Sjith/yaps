@@ -242,23 +242,6 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
                 }
             });
 
-            // Set-up sort selection spinner
-            Spinner sortSpinner = (Spinner) view.findViewById(R.id.photo_sort);
-            adapter = ArrayAdapter.createFromResource(mContext, R.array.sort_photos_by, android.R.layout.simple_spinner_dropdown_item);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            sortSpinner.setAdapter(adapter);
-            sortSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    // TODO Auto-generated method stub
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            });
-
             return view;
         }
     }
@@ -296,8 +279,8 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
         mAdapter.swapCursor(data);
 
         // TODO
-//        ProgressBar pb = (ProgressBar) findViewById(R.id.photo_progress_bar);
-//        pb.setVisibility(View.INVISIBLE);
+        // ProgressBar pb = (ProgressBar) findViewById(R.id.photo_progress_bar);
+        // pb.setVisibility(View.INVISIBLE);
     }
 
     @Override

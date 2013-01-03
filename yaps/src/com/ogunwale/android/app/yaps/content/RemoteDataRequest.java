@@ -38,7 +38,7 @@ import android.os.Bundle;
  * @author ogunwale
  *
  */
-public class RemoteDataRequest extends TimerTask {
+public class RemoteDataRequest extends TimerTask implements Session.StatusCallback, FacebookRequest.FacebookGraphAlbumListCallback {
 
     /**
      * Requesting activity
@@ -49,6 +49,8 @@ public class RemoteDataRequest extends TimerTask {
      * Request listener
      */
     private RemoteDataListener mListener = null;
+
+    private Session mFacebookSession = null;
 
     /**
      * Picasa Auth token
@@ -76,6 +78,11 @@ public class RemoteDataRequest extends TimerTask {
      * forced update.
      */
     private static final long ALBUM_UPDATE_INTERVAL = 60 * 60 * 1000;
+
+    /**
+     * Facebook permission to access user photos
+     */
+    private static final String FACEBOOK_USER_PHOTOS_PERMISSION = "user_photos";
 
     /**
      * Constructor starts the data request for the users albums.
@@ -258,46 +265,66 @@ public class RemoteDataRequest extends TimerTask {
     }
 
     private void getFacebookAlbums() {
-        // start Facebook Login
-        Session.openActiveSession(mActivity, true, new Session.StatusCallback() {
+        mFacebookSession = Session.getActiveSession();
 
-            // callback when session changes state
-            @Override
-            public void call(Session session, SessionState state, Exception exception) {
-                if (exception != null) {
-                    if (exception instanceof FacebookOperationCanceledException)
-                        reportCompletion(RemoteDataListener.Status.OPERATION_CANCELED_EXCEPTION);
-                    else if (exception instanceof FacebookAuthorizationException)
-                        reportCompletion(RemoteDataListener.Status.AUTHENTICATOR_EXCEPTION);
-                    else
-                        reportCompletion(RemoteDataListener.Status.UNKNOWN);
-                } else if (state == SessionState.OPENED) {
-                    session.requestNewReadPermissions(new Session.NewPermissionsRequest(mActivity, Arrays.asList("user_photos")));
-                } else if (state == SessionState.OPENED_TOKEN_UPDATED) {
-                    final Session refSession = session;
+        if (mFacebookSession == null || !mFacebookSession.isOpened())
+            Session.openActiveSession(mActivity, true, this);
+        else if (gotFacebookPermission(mFacebookSession, FACEBOOK_USER_PHOTOS_PERMISSION))
+            call(mFacebookSession, SessionState.OPENED_TOKEN_UPDATED, null);
+        else
+            call(mFacebookSession, SessionState.OPENED, null);
+    }
 
-                    // make request to the /me/ablums API
-                    FacebookRequest.executeMyAlbumsRequestAsync(session, new FacebookRequest.FacebookGraphAlbumListCallback() {
+    @Override
+    public void call(Session session, SessionState state, Exception exception) {
+        if (exception != null) {
+            if (exception instanceof FacebookOperationCanceledException)
+                reportCompletion(RemoteDataListener.Status.OPERATION_CANCELED_EXCEPTION);
+            else if (exception instanceof FacebookAuthorizationException)
+                reportCompletion(RemoteDataListener.Status.AUTHENTICATOR_EXCEPTION);
+            else
+                reportCompletion(RemoteDataListener.Status.UNKNOWN);
+        } else if (state == SessionState.OPENED) {
+            if (gotFacebookPermission(session, FACEBOOK_USER_PHOTOS_PERMISSION))
+                call(session, SessionState.OPENED_TOKEN_UPDATED, null);
+            else
+                session.requestNewReadPermissions(new Session.NewPermissionsRequest(mActivity, Arrays.asList(FACEBOOK_USER_PHOTOS_PERMISSION)));
+        } else if (state == SessionState.OPENED_TOKEN_UPDATED) {
+            session.removeCallback(this);
 
-                        @Override
-                        public void onCompleted(List<FacebookGraphAlbum> albums, Response response) {
-                            processFacebookAlbumData(new Timer("FacebookAlbumData"), ((RemoteDataAlbumListener) mListener), refSession, albums);
-                        }
-                    });
-                }
-            }
-        });
+            mFacebookSession = session;
+
+            // make request to the /me/ablums API
+            FacebookRequest.executeMyAlbumsRequestAsync(session, this);
+        }
     }
 
     /**
-     * Processes the album data on a separate thread to reduce slow down in
-     * getting more data from the server.
+     * Method checks if the input session has a specific permission
+     *
+     * @param session
+     *            session to check
+     * @param permission
+     *            permission to check of
+     * @return true if the session has the permission
      */
-    private void processFacebookAlbumData(final Timer timer, final RemoteDataAlbumListener listener, final Session session, final List<FacebookGraphAlbum> albums) {
+    private boolean gotFacebookPermission(Session session, String permission) {
+        List<String> permissions = session.getPermissions();
+
+        for (String p : permissions) {
+            if (p.equals(permission))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onCompleted(final List<FacebookGraphAlbum> albums, final Response response) {
+        Timer timer = new Timer("FacebookAlbumData");
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                listener.facebookAlbums(albums, session);
+                ((RemoteDataAlbumListener) mListener).facebookAlbums(albums, mFacebookSession);
                 reportCompletion(RemoteDataListener.Status.SUCCESSFUL);
             }
         }, 0);

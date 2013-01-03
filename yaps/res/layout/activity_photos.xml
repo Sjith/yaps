@@ -1,34 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.jess.ui.TwoWayGridView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/photo_gridview"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-    <ProgressBar
-        android:id="@+id/photo_progress_bar"
-        style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:indeterminateOnly="true" />
-
-    <com.jess.ui.TwoWayGridView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:custom="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/photo_gridview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        custom:columnWidth="200dp"
-        custom:gravity="center"
-        custom:horizontalSpacing="5dp"
-        custom:numColumns="auto_fit"
-        custom:numRows="auto_fit"
-        custom:rowHeight="200dp"
-        custom:scrollDirectionLandscape="horizontal"
-        custom:scrollDirectionPortrait="horizontal"
-        custom:stretchMode="spacingWidthUniform"
-        custom:verticalSpacing="5dp"
-        tools:context=".PhotosActivity" />
-
-</RelativeLayout>
+    android:layout_height="match_parent"
+    android:layout_alignParentBottom="true"
+    custom:columnWidth="@dimen/cell_width"
+    custom:gravity="center"
+    custom:horizontalSpacing="@dimen/cell_spacing"
+    custom:numColumns="auto_fit"
+    custom:numRows="auto_fit"
+    custom:rowHeight="@dimen/cell_height"
+    custom:scrollDirectionLandscape="horizontal"
+    custom:scrollDirectionPortrait="horizontal"
+    custom:stretchMode="spacingWidthUniform"
+    custom:verticalSpacing="@dimen/cell_spacing"
+    tools:context=".PhotosActivity" />
