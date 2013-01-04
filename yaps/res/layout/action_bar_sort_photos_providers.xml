@@ -11,23 +11,4 @@
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true" />
 
-    <ProgressBar
-        android:id="@+id/photo_progress_bar"
-        style="@android:style/Widget.Holo.Light.ProgressBar.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_toRightOf="@+id/photo_source"
-        android:indeterminateOnly="true" />
-
-    <ImageView
-        android:id="@+id/photo_refresh"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_toRightOf="@+id/photo_source"
-        android:clickable="true"
-        android:contentDescription="@string/image"
-        android:focusable="true"
-        android:scaleType="matrix"
-        android:src="@drawable/ic_menu_refresh" />
-
 </RelativeLayout>

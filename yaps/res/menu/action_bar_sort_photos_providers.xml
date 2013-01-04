@@ -2,6 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:id="@+id/menu_item_refresh"
+        android:icon="@drawable/ic_menu_refresh"
+        android:showAsAction="always"
+        android:title="@string/image"/>
+
+    <item
         android:id="@+id/menu_item_action_provider_action_bar"
         android:actionProviderClass="com.ogunwale.android.app.yaps.ui.PhotosActivity$PhotosActionProvider"
         android:showAsAction="always"

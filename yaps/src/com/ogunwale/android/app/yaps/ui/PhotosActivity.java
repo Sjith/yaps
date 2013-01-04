@@ -30,11 +30,12 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.ActionProvider;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 /**
@@ -44,7 +45,7 @@ import android.widget.Spinner;
  * @author ogunwale
  *
  */
-public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> {
+public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor>, RemoteDataAlbumListener {
 
     /**
      * Intents extras and actions consumed by this activity when it starts.
@@ -64,6 +65,11 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
          * Activity starts with the photo source set to Facebook
          */
         public static final String ACTION_SET_PHOTO_SOURCE_FACEBOOK = INTENT_PREFIX + "ACTION_SET_PHOTO_SOURCE_FACEBOOK";
+
+        /**
+         * Request for album data refresh is complete.
+         */
+        public static final String ACTION_REMOTE_ALBUM_REQUEST_COMPLETE = INTENT_PREFIX + "ACTION_REMOTE_ALBUM_REQUEST_COMPLETE";
     }
 
     /**
@@ -79,6 +85,13 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
                     changeSource(PhotosSourceEnum.FACEBOOK);
                 } else if (Extras.ACTION_SET_PHOTO_SOURCE_PICASA.equals(action) && mSourceSelection != PhotosSourceEnum.PICASA) {
                     changeSource(PhotosSourceEnum.PICASA);
+                } else if (Extras.ACTION_REMOTE_ALBUM_REQUEST_COMPLETE.equals(action)) {
+                    mGettingRemoteData = false;
+                    // invalidate options menu so we can hide the refresh
+                    // button.
+                    invalidateOptionsMenu();
+                    // hide progress spinner.
+                    setProgressBarIndeterminateVisibility(false);
                 }
             }
         }
@@ -92,9 +105,12 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
 
     private UiLifecycleHelper mFacebookUiHelper;
 
+    private boolean mGettingRemoteData = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
         mFacebookUiHelper = new UiLifecycleHelper(this, null);
         mFacebookUiHelper.onCreate(savedInstanceState);
@@ -121,9 +137,6 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
         // }
         // });
 
-        // Request/update album data from source
-        updateAlbumData();
-
         // Prepare the database loader.
         getLoaderManager().initLoader(0, null, this);
 
@@ -131,6 +144,7 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
         IntentFilter iFilter = new IntentFilter();
         iFilter.addAction(Extras.ACTION_SET_PHOTO_SOURCE_FACEBOOK);
         iFilter.addAction(Extras.ACTION_SET_PHOTO_SOURCE_PICASA);
+        iFilter.addAction(Extras.ACTION_REMOTE_ALBUM_REQUEST_COMPLETE);
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mLocalBroadcastReceiver, iFilter);
     }
 
@@ -139,6 +153,33 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.action_bar_sort_photos_providers, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case R.id.menu_item_refresh: {
+            mGettingRemoteData = true;
+            // Request/update album data from source
+            updateAlbumData();
+            // invalidate options menu so we can hide the refresh button.
+            invalidateOptionsMenu();
+            // display progress spinner.
+            setProgressBarIndeterminateVisibility(true);
+            return true;
+        }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (mGettingRemoteData)
+            menu.removeItem(R.id.menu_item_refresh);
+        else if (menu.findItem(R.id.menu_item_refresh) == null)
+            menu.add(R.id.menu_item_refresh);
+
+        return super.onPrepareOptionsMenu(menu);
     }
 
     /**
@@ -151,31 +192,7 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
             RemoteDataRequest.RequestType requestType = (mSourceSelection == PhotosSourceEnum.FACEBOOK) ? RemoteDataRequest.RequestType.FACEBOOK_ALBUMS
                     : RemoteDataRequest.RequestType.PICASA_ALBUMS;
 
-            new RemoteDataRequest(this, false, requestType, new RemoteDataAlbumListener() {
-                @Override
-                public void RequestComplete(Status status) {
-                    // TODO
-                }
-
-                @Override
-                public void facebookAlbums(List<FacebookGraphAlbum> albums, Session session) {
-                    if (albums != null) {
-                        for (FacebookGraphAlbum album : albums) {
-                            PhotosProviderAccess.Album.updateIfChanged(getContentResolver(), album, session);
-                        }
-                    }
-                }
-
-                @Override
-                public void picasaAlbums(List<AlbumEntry> albums) {
-                    if (albums != null) {
-                        for (AlbumEntry album : albums) {
-                            PhotosProviderAccess.Album.updateIfChanged(getContentResolver(), album);
-                        }
-                    }
-
-                }
-            });
+            new RemoteDataRequest(this, true, requestType, this);
             break;
         }
         case INVALID:
@@ -183,6 +200,30 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor> 
             break;
 
         }
+    }
+
+    @Override
+    public void RequestComplete(Status status) {
+        LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(Extras.ACTION_REMOTE_ALBUM_REQUEST_COMPLETE));
+    }
+
+    @Override
+    public void facebookAlbums(List<FacebookGraphAlbum> albums, Session session) {
+        if (albums != null) {
+            for (FacebookGraphAlbum album : albums) {
+                PhotosProviderAccess.Album.updateIfChanged(getContentResolver(), album, session);
+            }
+        }
+    }
+
+    @Override
+    public void picasaAlbums(List<AlbumEntry> albums) {
+        if (albums != null) {
+            for (AlbumEntry album : albums) {
+                PhotosProviderAccess.Album.updateIfChanged(getContentResolver(), album);
+            }
+        }
+
     }
 
     /**

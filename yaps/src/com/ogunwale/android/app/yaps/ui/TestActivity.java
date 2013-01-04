@@ -19,8 +19,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
+import android.view.Window;
 
-public class TestActivity extends Activity {
+public class TestActivity extends Activity implements RemoteDataAlbumListener {
 
     private static final String sTAG = TestActivity.class.getSimpleName();
 
@@ -29,10 +30,14 @@ public class TestActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
         setContentView(R.layout.activity_test);
 
         mFacebookUiHelper = new UiLifecycleHelper(this, null);
         mFacebookUiHelper.onCreate(savedInstanceState);
+
+        setProgressBarIndeterminateVisibility(true);
 
         Intent intent = getIntent();
         RemoteDataRequest.RequestType requestType = RemoteDataRequest.RequestType.PICASA_ALBUMS;
@@ -48,48 +53,48 @@ public class TestActivity extends Activity {
 
         Logger.getLogger(HttpTransport.class.getName()).setLevel(Level.CONFIG);
 
-        new RemoteDataRequest(this, true, requestType, new RemoteDataAlbumListener() {
-            @Override
-            public void RequestComplete(Status status) {
-                if (status == Status.SUCCESSFUL)
-                    Log.i(sTAG, "Request complete");
-                else
-                    Log.e(sTAG, "Request failed: " + status.toString());
-            }
+        new RemoteDataRequest(this, true, requestType, this);
+    }
 
-            @Override
-            public void picasaAlbums(List<AlbumEntry> albums) {
-                if (albums != null) {
-                    for (AlbumEntry album : albums) {
-                        Log.i(sTAG, "-----------------------------------------------");
-                        Log.i(sTAG, "Album title: " + album.title);
-                        Log.i(sTAG, "Updated: " + album.updated);
-                        Log.i(sTAG, "Album ETag: " + album.etag);
-                        Log.i(sTAG, "Thumbnail URL: " + album.mediaGroup.thumbnail.url);
-                        if (album.location != null)
-                            Log.i(sTAG, "Location: " + album.location);
-                        if (album.summary != null)
-                            Log.i(sTAG, "Description: " + album.summary);
-                    }
-                }
-            }
+    @Override
+    public void RequestComplete(Status status) {
+        if (status == Status.SUCCESSFUL)
+            Log.i(sTAG, "Request complete");
+        else
+            Log.e(sTAG, "Request failed: " + status.toString());
+    }
 
-            @Override
-            public void facebookAlbums(List<FacebookGraphAlbum> albums, Session session) {
-                if (albums != null) {
-                    for (FacebookGraphAlbum album : albums) {
-                        Log.i(sTAG, "-----------------------------------------------");
-                        Log.i(sTAG, "Album title: " + album.getName());
-                        Log.i(sTAG, "Updated: " + album.getUpdatedTime());
-                        Log.i(sTAG, "Cover photo id: " + album.getCoverPhoto());
-                        Log.i(sTAG, "Location: " + album.getLocation());
-                        Log.i(sTAG, "Description: " + album.getDescription());
-                        Log.i(sTAG, "Link: " + album.getLink());
-                        Log.i(sTAG, "Id: " + album.getId());
-                    }
-                }
+    @Override
+    public void picasaAlbums(List<AlbumEntry> albums) {
+        if (albums != null) {
+            for (AlbumEntry album : albums) {
+                Log.i(sTAG, "-----------------------------------------------");
+                Log.i(sTAG, "Album title: " + album.title);
+                Log.i(sTAG, "Updated: " + album.updated);
+                Log.i(sTAG, "Album ETag: " + album.etag);
+                Log.i(sTAG, "Thumbnail URL: " + album.mediaGroup.thumbnail.url);
+                if (album.location != null)
+                    Log.i(sTAG, "Location: " + album.location);
+                if (album.summary != null)
+                    Log.i(sTAG, "Description: " + album.summary);
             }
-        });
+        }
+    }
+
+    @Override
+    public void facebookAlbums(List<FacebookGraphAlbum> albums, Session session) {
+        if (albums != null) {
+            for (FacebookGraphAlbum album : albums) {
+                Log.i(sTAG, "-----------------------------------------------");
+                Log.i(sTAG, "Album title: " + album.getName());
+                Log.i(sTAG, "Updated: " + album.getUpdatedTime());
+                Log.i(sTAG, "Cover photo id: " + album.getCoverPhoto());
+                Log.i(sTAG, "Location: " + album.getLocation());
+                Log.i(sTAG, "Description: " + album.getDescription());
+                Log.i(sTAG, "Link: " + album.getLink());
+                Log.i(sTAG, "Id: " + album.getId());
+            }
+        }
     }
 
     @Override
