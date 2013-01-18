@@ -1,5 +1,8 @@
 package com.ogunwale.android.app.yaps.ui;
 
+import com.ogunwale.android.app.yaps.R;
+import com.ogunwale.android.app.yaps.content.PhotosProvider;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -20,8 +23,13 @@ import android.widget.TextView;
  */
 public class PhotosSimpleCursorAdapter extends SimpleCursorAdapter {
 
-    public PhotosSimpleCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
-        super(context, layout, c, from, to, flags);
+    private static final String[] FROM = new String[] { PhotosProvider.AlbumTable.COLUMN_NAME_COVER_BITMAP,
+            PhotosProvider.AlbumTable.COLUMN_NAME_TITLE, PhotosProvider.AlbumTable.COLUMN_NAME_PHOTOS_COUNT };
+
+    private static final int[] TO = new int[] { R.id.thumbnail_layout, R.id.thumbnail_description, R.id.thumbnail_count };
+
+    public PhotosSimpleCursorAdapter(Context context) {
+        super(context, R.layout.layout_photo_thumbnail, null, FROM, TO, 0);
     }
 
     /*

@@ -3,9 +3,7 @@
     android:id="@+id/thumbnail_layout"
     android:layout_width="@dimen/cell_width"
     android:layout_height="@dimen/cell_height"
-    android:background="@android:drawable/screen_background_dark_transparent"
-    android:clickable="true"
-    android:focusable="true" >
+    android:background="@android:drawable/screen_background_dark_transparent" >
 
     <TextView
         android:id="@+id/thumbnail_count"

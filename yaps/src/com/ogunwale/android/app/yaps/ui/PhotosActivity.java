@@ -6,6 +6,8 @@ import java.util.Locale;
 import com.facebook.Session;
 import com.facebook.UiLifecycleHelper;
 import com.google.api.services.picasa.model.AlbumEntry;
+import com.jess.ui.TwoWayAdapterView;
+import com.jess.ui.TwoWayAdapterView.OnItemClickListener;
 import com.jess.ui.TwoWayGridView;
 import com.ogunwale.android.app.yaps.R;
 import com.ogunwale.android.app.yaps.content.FacebookGraphAlbum;
@@ -18,15 +20,19 @@ import com.ogunwale.android.app.yaps.content.SettingsManager;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.ActionProvider;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,7 +42,9 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 /**
  * Activity display photos based on a selected source (Picasa or Facebook) and
@@ -46,6 +54,8 @@ import android.widget.Spinner;
  *
  */
 public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor>, RemoteDataAlbumListener {
+
+    private static final String sTAG = PhotosActivity.class.getSimpleName();
 
     /**
      * Intents extras and actions consumed by this activity when it starts.
@@ -120,22 +130,17 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor>,
         setContentView(R.layout.activity_photos);
 
         // Set-up cursor adapter
-        String[] from = new String[] { PhotosProvider.AlbumTable.COLUMN_NAME_COVER_BITMAP, PhotosProvider.AlbumTable.COLUMN_NAME_TITLE,
-                PhotosProvider.AlbumTable.COLUMN_NAME_PHOTOS_COUNT };
-        int[] to = new int[] { R.id.thumbnail_layout, R.id.thumbnail_description, R.id.thumbnail_count };
-        mAdapter = new PhotosSimpleCursorAdapter(this, R.layout.layout_photo_thumbnail, null, from, to, 0);
+        mAdapter = new PhotosSimpleCursorAdapter(this);
 
         // Set-up thumbnail grid
         mGridView = (TwoWayGridView) findViewById(R.id.photo_gridview);
         mGridView.setAdapter(mAdapter);
-        // mGridView.setOnClickListener(new
-        // TwoWayAdapterView.OnItemClickListener() {
-        // @Override
-        // public void onItemClick(TwoWayAdapterView<?> parent, View view, int
-        // position, long id) {
-        // TODO Auto-generated method stub
-        // }
-        // });
+        mGridView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(TwoWayAdapterView<?> parent, View view, int position, long id) {
+                displayTransferDialog(position, id);
+            }
+        });
 
         // Prepare the database loader.
         getLoaderManager().initLoader(0, null, this);
@@ -146,6 +151,47 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor>,
         iFilter.addAction(Extras.ACTION_SET_PHOTO_SOURCE_PICASA);
         iFilter.addAction(Extras.ACTION_REMOTE_ALBUM_REQUEST_COMPLETE);
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mLocalBroadcastReceiver, iFilter);
+    }
+
+    private void displayTransferDialog(int position, final long rowId) {
+
+        Cursor cursor = mAdapter.getCursor();
+        if (cursor.moveToPosition(position)) {
+            LayoutInflater li = LayoutInflater.from(this);
+            View view = li.inflate(R.layout.layout_transfer_dialog, null);
+
+            ImageView image = (ImageView) view.findViewById(R.id.transfer_dialog_image);
+            byte[] blob = cursor.getBlob(cursor.getColumnIndexOrThrow(PhotosProvider.AlbumTable.COLUMN_NAME_COVER_BITMAP));
+            if (blob != null && blob.length > 0)
+                image.setImageBitmap(BitmapFactory.decodeByteArray(blob, 0, blob.length));
+
+            TextView text = (TextView) view.findViewById(R.id.transfer_dialog_text);
+            String title = cursor.getString(cursor.getColumnIndexOrThrow(PhotosProvider.AlbumTable.COLUMN_NAME_TITLE));
+            String location = cursor.getString(cursor.getColumnIndexOrThrow(PhotosProvider.AlbumTable.COLUMN_NAME_LOCATION));
+            int count = cursor.getInt(cursor.getColumnIndexOrThrow(PhotosProvider.AlbumTable.COLUMN_NAME_PHOTOS_COUNT));
+            text.setText(location + "\n" + count);
+
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setTitle(title);
+            dialog.setView(view);
+            dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            int positiveString = (mSourceSelection == PhotosSourceEnum.PICASA) ? R.string.transfer_to_facebook : R.string.transfer_to_picasa;
+            dialog.setPositiveButton(positiveString, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // TODO
+                }
+            });
+            dialog.show();
+
+        } else {
+            Log.e(sTAG, "Can not move cursor to: " + position);
+        }
     }
 
     @Override
@@ -303,10 +349,17 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor>,
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // This is called when a new Loader needs to be created. We
         // only has one Loader, so we don't care about the ID.
-        String[] projection = new String[] { PhotosProvider.AlbumTable._ID, PhotosProvider.AlbumTable.COLUMN_NAME_COVER_BITMAP,
-                PhotosProvider.AlbumTable.COLUMN_NAME_TITLE, PhotosProvider.AlbumTable.COLUMN_NAME_PHOTOS_COUNT };
+
+        //@formatter:off
+        String[] projection = new String[] {
+                    PhotosProvider.AlbumTable._ID,
+                    PhotosProvider.AlbumTable.COLUMN_NAME_COVER_BITMAP,
+                    PhotosProvider.AlbumTable.COLUMN_NAME_TITLE,
+                    PhotosProvider.AlbumTable.COLUMN_NAME_PHOTOS_COUNT,
+                    PhotosProvider.AlbumTable.COLUMN_NAME_LOCATION };
         String selection = String.format(Locale.getDefault(), "%s=?", PhotosProvider.AlbumTable.COLUMN_NAME_SOURCE);
         String[] selectionArgs = new String[] { String.valueOf(mSourceSelection.getValue()) };
+        //@formatter:on
 
         // Create and return a CursorLoader that will take care of
         // creating a Cursor for the data being displayed.
@@ -318,10 +371,6 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor>,
         // Swap the new cursor in. (The framework will take care of closing the
         // old cursor once we return.)
         mAdapter.swapCursor(data);
-
-        // TODO
-        // ProgressBar pb = (ProgressBar) findViewById(R.id.photo_progress_bar);
-        // pb.setVisibility(View.INVISIBLE);
     }
 
     @Override

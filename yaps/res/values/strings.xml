@@ -11,6 +11,7 @@
 
     <!-- Common translate strings -->
 
+
     <!-- Main Activity strings -->
     <string name="transfer_albums_photos">Transfer Albums/Photos</string>
     <string name="view_albums_photos">View Albums/Photos</string>
@@ -27,5 +28,7 @@
     <!-- Alert Dialog strings -->
     <string name="okay">Okay</string>
     <string name="cancel">Cancel</string>
+    <string name="transfer_to_facebook">Transfer to Facebook</string>
+    <string name="transfer_to_picasa">Transfer to Picasa</string>
 
 </resources>
