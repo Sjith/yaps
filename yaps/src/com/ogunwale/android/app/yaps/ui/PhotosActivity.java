@@ -21,6 +21,8 @@ import com.ogunwale.android.app.yaps.content.SettingsManager;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -63,7 +65,7 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor>,
      * @author ogunwale
      *
      */
-    public static class Extras {
+    public static interface Extras {
         public static final String INTENT_PREFIX = "com.ogunwale.android.apps.yaps.";
 
         /**
@@ -138,7 +140,13 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor>,
         mGridView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(TwoWayAdapterView<?> parent, View view, int position, long id) {
-                displayTransferDialog(position, id);
+                Cursor cursor = mAdapter.getCursor();
+                if (cursor.moveToPosition(position)) {
+                    DialogFragment df = TransferDialogFragment.newInstance(cursor, id);
+                    df.show(getFragmentManager(), "transfer_dialog");
+                } else {
+                    Log.e(sTAG, "Can not move cursor to: " + position);
+                }
             }
         });
 
@@ -153,25 +161,47 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor>,
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mLocalBroadcastReceiver, iFilter);
     }
 
-    private void displayTransferDialog(int position, final long rowId) {
+    public static class TransferDialogFragment extends DialogFragment {
 
-        Cursor cursor = mAdapter.getCursor();
-        if (cursor.moveToPosition(position)) {
-            LayoutInflater li = LayoutInflater.from(this);
+        private static final String ROW_ID = "row_id";
+        private static final String IMAGE_BLOB = "image_blob";
+        private static final String TITLE = "title";
+        private static final String LOCATION = "location";
+        private static final String PHOTOS_COUNT = "photos_count";
+
+        public static TransferDialogFragment newInstance(Cursor cursor, long rowId) {
+            TransferDialogFragment frag = new TransferDialogFragment();
+
+            Bundle args = new Bundle();
+            args.putLong(ROW_ID, rowId);
+            args.putByteArray(IMAGE_BLOB, cursor.getBlob(cursor.getColumnIndexOrThrow(PhotosProvider.AlbumTable.COLUMN_NAME_COVER_BITMAP)));
+            args.putString(TITLE, cursor.getString(cursor.getColumnIndexOrThrow(PhotosProvider.AlbumTable.COLUMN_NAME_TITLE)));
+            args.putString(LOCATION, cursor.getString(cursor.getColumnIndexOrThrow(PhotosProvider.AlbumTable.COLUMN_NAME_LOCATION)));
+            args.putInt(PHOTOS_COUNT, cursor.getInt(cursor.getColumnIndexOrThrow(PhotosProvider.AlbumTable.COLUMN_NAME_PHOTOS_COUNT)));
+
+            frag.setArguments(args);
+            return frag;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final long rowId = getArguments().getLong(ROW_ID);
+
+            LayoutInflater li = LayoutInflater.from(getActivity());
             View view = li.inflate(R.layout.layout_transfer_dialog, null);
 
             ImageView image = (ImageView) view.findViewById(R.id.transfer_dialog_image);
-            byte[] blob = cursor.getBlob(cursor.getColumnIndexOrThrow(PhotosProvider.AlbumTable.COLUMN_NAME_COVER_BITMAP));
+            byte[] blob = getArguments().getByteArray(IMAGE_BLOB);
             if (blob != null && blob.length > 0)
                 image.setImageBitmap(BitmapFactory.decodeByteArray(blob, 0, blob.length));
 
             TextView text = (TextView) view.findViewById(R.id.transfer_dialog_text);
-            String title = cursor.getString(cursor.getColumnIndexOrThrow(PhotosProvider.AlbumTable.COLUMN_NAME_TITLE));
-            String location = cursor.getString(cursor.getColumnIndexOrThrow(PhotosProvider.AlbumTable.COLUMN_NAME_LOCATION));
-            int count = cursor.getInt(cursor.getColumnIndexOrThrow(PhotosProvider.AlbumTable.COLUMN_NAME_PHOTOS_COUNT));
+            String title = getArguments().getString(TITLE);
+            String location = getArguments().getString(LOCATION);
+            int count = getArguments().getInt(PHOTOS_COUNT);
             text.setText(location + "\n" + count);
 
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
             dialog.setTitle(title);
             dialog.setView(view);
             dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -187,10 +217,8 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor>,
                     // TODO
                 }
             });
-            dialog.show();
 
-        } else {
-            Log.e(sTAG, "Can not move cursor to: " + position);
+            return dialog.create();
         }
     }
 
