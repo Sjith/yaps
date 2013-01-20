@@ -1,3 +1,18 @@
+/**
+ * Copyright 2013 Olawale Ogunwale
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ogunwale.android.app.yaps.content;
 
 import java.io.BufferedInputStream;
@@ -63,7 +78,7 @@ public class PhotosProviderAccess {
             Cursor cursor = null;
             String[] projection = new String[] { PhotosProvider.AlbumTable._ID, PhotosProvider.AlbumTable.COLUMN_NAME_UPDATED };
             String selection = String.format(Locale.getDefault(), "%s=? AND %s=?", PhotosProvider.AlbumTable.COLUMN_NAME_SOURCE,
-                    PhotosProvider.AlbumTable.COLUMN_NAME_EXTERNAL_ID);
+                            PhotosProvider.AlbumTable.COLUMN_NAME_EXTERNAL_ID);
             String[] selectionArgs = new String[] { String.valueOf(PhotosSourceEnum.PICASA.getValue()), album.id };
 
             cursor = cr.query(PhotosProvider.AlbumTable.CONTENT_URI, projection, selection, selectionArgs, null);
@@ -105,7 +120,7 @@ public class PhotosProviderAccess {
             Cursor cursor = null;
             String[] projection = new String[] { PhotosProvider.AlbumTable._ID, PhotosProvider.AlbumTable.COLUMN_NAME_UPDATED };
             String selection = String.format(Locale.getDefault(), "%s=? AND %s=?", PhotosProvider.AlbumTable.COLUMN_NAME_SOURCE,
-                    PhotosProvider.AlbumTable.COLUMN_NAME_EXTERNAL_ID);
+                            PhotosProvider.AlbumTable.COLUMN_NAME_EXTERNAL_ID);
             String[] selectionArgs = new String[] { String.valueOf(PhotosSourceEnum.FACEBOOK.getValue()), album.getId() };
 
             cursor = cr.query(PhotosProvider.AlbumTable.CONTENT_URI, projection, selection, selectionArgs, null);
@@ -201,6 +216,13 @@ public class PhotosProviderAccess {
             return values;
         }
 
+        /**
+         * Get the album cover from the input URL
+         *
+         * @param url
+         *            URL to get album cover from
+         * @return album cover byte array
+         */
         private static byte[] getAlbumCover(String url) {
             byte[] cover = null;
             InputStream in = null;

@@ -1,3 +1,18 @@
+/**
+ * Copyright 2013 Olawale Ogunwale
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ogunwale.android.app.yaps.ui;
 
 import java.util.List;
@@ -19,7 +34,6 @@ import com.ogunwale.android.app.yaps.content.RemoteDataRequest;
 import com.ogunwale.android.app.yaps.content.SettingsManager;
 
 import android.os.Bundle;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -49,13 +63,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 /**
- * Activity display photos based on a selected source (Picasa or Facebook) and
- * sort type (Albums, Locations, ...)
+ * Activity display photos based on a selected source (Picasa or Facebook)
  *
  * @author ogunwale
  *
  */
-public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor>, RemoteDataAlbumListener {
+public class PhotosActivity extends BaseActivity implements LoaderCallbacks<Cursor>, RemoteDataAlbumListener {
 
     private static final String sTAG = PhotosActivity.class.getSimpleName();
 
@@ -115,17 +128,12 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor>,
 
     private TwoWayGridView mGridView;
 
-    private UiLifecycleHelper mFacebookUiHelper;
-
     private boolean mGettingRemoteData = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-
-        mFacebookUiHelper = new UiLifecycleHelper(this, null);
-        mFacebookUiHelper.onCreate(savedInstanceState);
 
         mSourceSelection = SettingsManager.getInstance(getApplicationContext()).getAlbumSelection();
 
@@ -264,7 +272,7 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor>,
         case FACEBOOK:
         case PICASA: {
             RemoteDataRequest.RequestType requestType = (mSourceSelection == PhotosSourceEnum.FACEBOOK) ? RemoteDataRequest.RequestType.FACEBOOK_ALBUMS
-                    : RemoteDataRequest.RequestType.PICASA_ALBUMS;
+                            : RemoteDataRequest.RequestType.PICASA_ALBUMS;
 
             new RemoteDataRequest(this, true, requestType, this);
             break;
@@ -297,7 +305,6 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor>,
                 PhotosProviderAccess.Album.updateIfChanged(getContentResolver(), album);
             }
         }
-
     }
 
     /**
@@ -324,7 +331,7 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor>,
             // Set-up source selection spinner
             Spinner sourceSpinner = (Spinner) view.findViewById(R.id.photo_source);
             ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(mContext, R.array.sources,
-                    android.R.layout.simple_spinner_dropdown_item);
+                            android.R.layout.simple_spinner_dropdown_item);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             sourceSpinner.setAdapter(adapter);
             sourceSpinner.setSelection(mSourceSelection.getValue());
@@ -384,7 +391,8 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor>,
                     PhotosProvider.AlbumTable.COLUMN_NAME_COVER_BITMAP,
                     PhotosProvider.AlbumTable.COLUMN_NAME_TITLE,
                     PhotosProvider.AlbumTable.COLUMN_NAME_PHOTOS_COUNT,
-                    PhotosProvider.AlbumTable.COLUMN_NAME_LOCATION };
+                    PhotosProvider.AlbumTable.COLUMN_NAME_LOCATION
+                    };
         String selection = String.format(Locale.getDefault(), "%s=?", PhotosProvider.AlbumTable.COLUMN_NAME_SOURCE);
         String[] selectionArgs = new String[] { String.valueOf(mSourceSelection.getValue()) };
         //@formatter:on
@@ -410,32 +418,9 @@ public class PhotosActivity extends Activity implements LoaderCallbacks<Cursor>,
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        mFacebookUiHelper.onResume();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mFacebookUiHelper.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        mFacebookUiHelper.onPause();
-    }
-
     protected void onDestory() {
         super.onDestroy();
-        mFacebookUiHelper.onDestroy();
         LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mLocalBroadcastReceiver);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        mFacebookUiHelper.onActivityResult(requestCode, resultCode, data);
-    }
 }

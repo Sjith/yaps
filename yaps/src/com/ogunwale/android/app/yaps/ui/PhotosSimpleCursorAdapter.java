@@ -1,3 +1,18 @@
+/**
+ * Copyright 2013 Olawale Ogunwale
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ogunwale.android.app.yaps.ui;
 
 import com.ogunwale.android.app.yaps.R;
@@ -23,13 +38,22 @@ import android.widget.TextView;
  */
 public class PhotosSimpleCursorAdapter extends SimpleCursorAdapter {
 
-    private static final String[] FROM = new String[] { PhotosProvider.AlbumTable.COLUMN_NAME_COVER_BITMAP,
-            PhotosProvider.AlbumTable.COLUMN_NAME_TITLE, PhotosProvider.AlbumTable.COLUMN_NAME_PHOTOS_COUNT };
+    //@formatter:off
+    private static final String[] FROM_DB_COLUMNS = new String[] {
+        PhotosProvider.AlbumTable.COLUMN_NAME_COVER_BITMAP,
+        PhotosProvider.AlbumTable.COLUMN_NAME_TITLE,
+        PhotosProvider.AlbumTable.COLUMN_NAME_PHOTOS_COUNT
+        };
 
-    private static final int[] TO = new int[] { R.id.thumbnail_layout, R.id.thumbnail_description, R.id.thumbnail_count };
+    private static final int[] TO_UI_VIEWS = new int[] {
+        R.id.thumbnail_layout,
+        R.id.thumbnail_description,
+        R.id.thumbnail_count
+        };
+    //@formatter:on
 
     public PhotosSimpleCursorAdapter(Context context) {
-        super(context, R.layout.layout_photo_thumbnail, null, FROM, TO, 0);
+        super(context, R.layout.layout_photo_thumbnail, null, FROM_DB_COLUMNS, TO_UI_VIEWS, 0);
     }
 
     /*

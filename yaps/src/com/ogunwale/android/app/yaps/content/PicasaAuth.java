@@ -1,3 +1,18 @@
+/**
+ * Copyright 2013 Olawale Ogunwale
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ogunwale.android.app.yaps.content;
 
 import java.io.IOException;
@@ -17,9 +32,9 @@ import com.google.api.client.googleapis.extensions.android2.auth.GoogleAccountMa
 /**
  * This class is responsible for authorization/authentication into the users
  * Picasa web albums account.
- *
+ * 
  * @author ogunwale
- *
+ * 
  */
 public class PicasaAuth {
 
@@ -33,7 +48,7 @@ public class PicasaAuth {
     /**
      * Asynchronous method call used to authenticate access to the user's Picasa
      * account. The provided callback will be called once the process is done.
-     *
+     * 
      * @param activity
      *            calling activity
      * @param callback
@@ -41,7 +56,7 @@ public class PicasaAuth {
      */
     public static void authenticateAsync(Activity activity, AccountManagerCallback<Bundle> callback) {
         AccountManager.get(activity).getAuthTokenByFeatures(GoogleAccountManager.ACCOUNT_TYPE, PICASA_AUTH_TOKEN_TYPE, null, activity, null, null,
-                callback, null);
+                        callback, null);
     }
 
     /**
@@ -50,7 +65,7 @@ public class PicasaAuth {
      * bundle.getString(AccountManager.KEY_ACCOUNT_NAME) and
      * bundle.getString(AccountManager.KEY_AUTHTOKEN) to get the name and token
      * information.
-     *
+     * 
      * @param activity
      *            calling activity.
      * @return Returns a valid Bundle is the authentication was successful, else
@@ -60,7 +75,7 @@ public class PicasaAuth {
         Bundle bundle = null;
 
         AccountManagerFuture<Bundle> future = AccountManager.get(activity).getAuthTokenByFeatures(GoogleAccountManager.ACCOUNT_TYPE,
-                PICASA_AUTH_TOKEN_TYPE, null, activity, null, null, null, null);
+                        PICASA_AUTH_TOKEN_TYPE, null, activity, null, null, null, null);
 
         if (future != null) {
             try {
@@ -82,7 +97,7 @@ public class PicasaAuth {
 
     /**
      * Invalidates the auth token for the google account.
-     *
+     * 
      * @param context
      *            current context
      * @param authToken

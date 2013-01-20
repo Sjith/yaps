@@ -1,3 +1,18 @@
+/**
+ * Copyright 2013 Olawale Ogunwale
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ogunwale.android.app.yaps.content;
 
 import java.io.IOException;
@@ -34,9 +49,9 @@ import android.os.Bundle;
 /**
  * Class is responsible for getting data from remote providers like Picasa and
  * Facebook.
- *
+ * 
  * @author ogunwale
- *
+ * 
  */
 public class RemoteDataRequest extends TimerTask implements Session.StatusCallback, FacebookRequest.FacebookGraphAlbumListCallback {
 
@@ -66,7 +81,7 @@ public class RemoteDataRequest extends TimerTask implements Session.StatusCallba
 
     /**
      * Data request types
-     *
+     * 
      */
     public static enum RequestType {
         PICASA_ALBUMS, FACEBOOK_ALBUMS, INVALID
@@ -86,9 +101,14 @@ public class RemoteDataRequest extends TimerTask implements Session.StatusCallba
 
     /**
      * Constructor starts the data request for the users albums.
-     *
+     * 
      * @param activity
      *            requesting activity
+     * @param forceUpdate
+     *            forces an update for the request regardless of the update
+     *            interval time
+     * @param requestType
+     *            request type
      * @param listener
      *            listener used to report status and results.
      */
@@ -124,7 +144,7 @@ public class RemoteDataRequest extends TimerTask implements Session.StatusCallba
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.TimerTask#run()
      */
     @Override
@@ -199,7 +219,7 @@ public class RemoteDataRequest extends TimerTask implements Session.StatusCallba
     /**
      * Calls the request listener to report the status and removes reference to
      * the calling activity.
-     *
+     * 
      * @param status
      */
     private void reportCompletion(RemoteDataListener.Status status) {
@@ -208,6 +228,11 @@ public class RemoteDataRequest extends TimerTask implements Session.StatusCallba
         mListener = null;
     }
 
+    /**
+     * Process request and return status to caller.
+     * 
+     * @return status of request
+     */
     private RemoteDataListener.Status processRequest() {
         switch (mRequestType) {
         case PICASA_ALBUMS:
@@ -218,6 +243,11 @@ public class RemoteDataRequest extends TimerTask implements Session.StatusCallba
         }
     }
 
+    /**
+     * Get Picasa albums.
+     * 
+     * @return Status of getting Picasa albums
+     */
     private RemoteDataListener.Status getPicasaAlbums() {
         HttpTransport transport = new NetHttpTransport();
         HttpRequestFactory factory = transport.createRequestFactory(new HttpRequestInitializer() {
@@ -264,6 +294,9 @@ public class RemoteDataRequest extends TimerTask implements Session.StatusCallba
         }
     }
 
+    /**
+     * Get Facebook albums 
+     */
     private void getFacebookAlbums() {
         mFacebookSession = Session.getActiveSession();
 
@@ -275,6 +308,9 @@ public class RemoteDataRequest extends TimerTask implements Session.StatusCallba
             call(mFacebookSession, SessionState.OPENED, null);
     }
 
+    /* (non-Javadoc)
+     * @see com.facebook.Session.StatusCallback#call(com.facebook.Session, com.facebook.SessionState, java.lang.Exception)
+     */
     @Override
     public void call(Session session, SessionState state, Exception exception) {
         if (exception != null) {
@@ -301,7 +337,7 @@ public class RemoteDataRequest extends TimerTask implements Session.StatusCallba
 
     /**
      * Method checks if the input session has a specific permission
-     *
+     * 
      * @param session
      *            session to check
      * @param permission
@@ -318,6 +354,9 @@ public class RemoteDataRequest extends TimerTask implements Session.StatusCallba
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see com.ogunwale.android.app.yaps.content.FacebookRequest.FacebookGraphAlbumListCallback#onCompleted(java.util.List, com.facebook.Response)
+     */
     @Override
     public void onCompleted(final List<FacebookGraphAlbum> albums, final Response response) {
         Timer timer = new Timer("FacebookAlbumData");
@@ -333,7 +372,7 @@ public class RemoteDataRequest extends TimerTask implements Session.StatusCallba
     /**
      * Processes the album feed data on a separate thread to reduce slow down in
      * getting more data from the server.
-     *
+     * 
      * @param timer
      * @param feed
      */
